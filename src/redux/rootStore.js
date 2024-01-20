@@ -12,6 +12,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import themeReducer from './slices/themeSlice';
 import userReducer from './slices/userSlice';
+import monsterReducer from './slices/monsterSlice';
 
 const themePersistConfig = {
 	key: 'theme',
@@ -25,11 +26,18 @@ const userPersistConfig = {
 	// whitelist: ['user'],
 };
 
+const monsterPersistConfig = {
+	key: 'monster',
+	storage: AsyncStorage,
+	// whitelist: ['monsters'],
+};
+
 export const store = configureStore({
 	reducer: {
-		theme: persistReducer(themePersistConfig, themeReducer),
+		theme: themeReducer,
 		// user: persistReducer(userPersistConfig, userReducer),
 		user: userReducer,
+		monster: persistReducer(monsterPersistConfig, monsterReducer),
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({

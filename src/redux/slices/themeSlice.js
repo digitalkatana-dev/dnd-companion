@@ -7,7 +7,7 @@ const initialState = themeAdapter.getInitialState({
 	primary: '#242629',
 	secondary: '#16161a',
 	heading: '#fffffe',
-	paragraph: '#94a1b2',
+	paragraph: 'brown',
 	highlight: '#2cb67d',
 	highlightShadow: 'rgba(44, 182, 125, 0.2)',
 	outline: '#010101',
