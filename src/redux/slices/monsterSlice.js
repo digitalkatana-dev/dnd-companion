@@ -3,6 +3,7 @@ import {
 	createEntityAdapter,
 	createSlice,
 } from '@reduxjs/toolkit';
+import { logout } from './userSlice';
 import open5eApi from '../../api/open5eApi';
 
 export const loadMonsters = createAsyncThunk(
@@ -10,6 +11,18 @@ export const loadMonsters = createAsyncThunk(
 	async (data, { rejectWithValue }) => {
 		try {
 			const res = await open5eApi.get(`/monsters/?page=${data}`);
+			return res.data.results;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
+export const filterMonsters = createAsyncThunk(
+	'monsters/filter',
+	async (data, { rejectWithValue }) => {
+		try {
+			const res = await open5eApi.get(`/monsters`);
 			return res.data.results;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -52,6 +65,13 @@ export const monsterSlice = createSlice({
 			.addCase(loadMonsters.rejected, (state, action) => {
 				state.loading = false;
 				state.errors = action.payload;
+			})
+			.addCase(logout, (state) => {
+				state.loading = false;
+				state.page = 0;
+				state.monsters = [];
+				state.errors = null;
+				monsterAdapter.removeAll(state);
 			});
 	},
 });

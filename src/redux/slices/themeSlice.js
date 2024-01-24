@@ -2,12 +2,12 @@ import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
 export const themeAdapter = createEntityAdapter();
 const initialState = themeAdapter.getInitialState({
-	brand: '#7f5af0',
-	brandShadow: 'rgba(129, 92, 240, 0.2)',
-	primary: '#242629',
+	brand: 'brown',
+	brandShadow: 'rgba(165, 42, 42, 0.2)',
+	primary: '#051625',
 	secondary: '#16161a',
 	heading: '#fffffe',
-	paragraph: 'brown',
+	paragraph: 'goldenrod',
 	highlight: '#2cb67d',
 	highlightShadow: 'rgba(44, 182, 125, 0.2)',
 	outline: '#010101',

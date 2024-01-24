@@ -1,4 +1,5 @@
 import {
+	FlatList,
 	Image,
 	ImageBackground,
 	ScrollView,
@@ -7,14 +8,20 @@ import {
 	View,
 } from 'react-native';
 import { Divider } from '@rneui/themed';
-import { useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCampaigns } from '../../../redux/slices/campaignSlice';
 import { capitalizeWords } from '../../../util/helpers';
 import IconButton from '../../../components/IconButton';
-import React from 'react';
+import CampaignPicker from '../../../components/CampaignPicker';
+import CampaignListItem from '../../../components/CampaignListItem';
 
-const MonsterDetailScreen = ({ route }) => {
-	const theme = useSelector((state) => state.theme);
+const MonsterDetailScreen = ({ route, navigation }) => {
 	const { monster } = route.params;
+	const theme = useSelector((state) => state.theme);
+	const { campaigns } = useSelector((state) => state.campaigns);
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const dispatch = useDispatch();
 
 	const speed = () => {
 		const monsterSpeed = monster.speed;
@@ -46,6 +53,15 @@ const MonsterDetailScreen = ({ route }) => {
 		return elements;
 	};
 
+	const onAddToCampaign = () => {
+		setIsModalVisible(true);
+		dispatch(getCampaigns());
+	};
+
+	const onModalClose = () => {
+		setIsModalVisible(false);
+	};
+
 	const styles = StyleSheet.create({
 		canvas: {
 			flex: 1,
@@ -63,7 +79,7 @@ const MonsterDetailScreen = ({ route }) => {
 			gap: 5,
 		},
 		buttonLabel: {
-			color: theme.paragraph,
+			color: theme.brand,
 		},
 		scroll: {
 			paddingBottom: 20,
@@ -80,18 +96,18 @@ const MonsterDetailScreen = ({ route }) => {
 			fontFamily: 'AlegreyaSC_700Bold',
 			fontSize: 23,
 			fontWeight: '400',
-			color: theme.paragraph,
+			color: theme.brand,
 		},
 		vitals: {
 			fontSize: 11,
 			fontStyle: 'italic',
-			color: theme.paragraph,
+			color: theme.brand,
 		},
 		monsterImg: {
 			width: 75,
 			height: 75,
 			borderWidth: 2,
-			borderColor: theme.paragraph,
+			borderColor: theme.brand,
 			borderRadius: 10,
 		},
 		divider: {
@@ -106,11 +122,11 @@ const MonsterDetailScreen = ({ route }) => {
 			fontSize: 12,
 			fontWeight: 'bold',
 			marginRight: 5,
-			color: theme.paragraph,
+			color: theme.brand,
 		},
 		statTxt: {
 			fontSize: 11,
-			color: theme.paragraph,
+			color: theme.brand,
 		},
 		statBlockRow: {
 			flexDirection: 'row',
@@ -133,7 +149,7 @@ const MonsterDetailScreen = ({ route }) => {
 		sectionLabel: {
 			fontFamily: 'AlegreyaSC_500Medium',
 			fontSize: 18,
-			color: theme.paragraph,
+			color: theme.brand,
 			textDecorationLine: 'underline',
 		},
 		legendaryDesc: {
@@ -156,7 +172,8 @@ const MonsterDetailScreen = ({ route }) => {
 					<IconButton
 						icon='add-circle-outline'
 						size={35}
-						color={theme.paragraph}
+						color={theme.brand}
+						onPress={onAddToCampaign}
 					/>
 				</View>
 				<ScrollView contentContainerStyle={styles.scroll}>
@@ -179,7 +196,7 @@ const MonsterDetailScreen = ({ route }) => {
 								/>
 							)}
 						</View>
-						<Divider style={styles.divider} color={theme.paragraph} width={3} />
+						<Divider style={styles.divider} color={theme.brand} width={3} />
 						<View style={styles.statRow}>
 							<Text style={styles.statLabel}>Armor Class</Text>
 							<Text style={styles.statTxt}>{`${monster.armor_class} ${
@@ -196,7 +213,7 @@ const MonsterDetailScreen = ({ route }) => {
 							<Text style={styles.statLabel}>Speed</Text>
 							{speed()}
 						</View>
-						<Divider style={styles.divider} color={theme.paragraph} width={3} />
+						<Divider style={styles.divider} color={theme.brand} width={3} />
 						<View style={styles.statBlockRow}>
 							<View style={styles.statStack}>
 								<Text style={styles.statLabel}>STR</Text>
@@ -223,7 +240,7 @@ const MonsterDetailScreen = ({ route }) => {
 								<Text style={styles.statTxt}>{monster.charisma}</Text>
 							</View>
 						</View>
-						<Divider style={styles.divider} color={theme.paragraph} width={3} />
+						<Divider style={styles.divider} color={theme.brand} width={3} />
 						<View style={styles.statRow}>
 							<Text style={styles.statLabel}>Saving Throws</Text>
 							{monster.strength_save && (
@@ -308,7 +325,7 @@ const MonsterDetailScreen = ({ route }) => {
 								style={styles.statTxt}
 							>{`${monster.challenge_rating}`}</Text>
 						</View>
-						<Divider style={styles.divider} color={theme.paragraph} width={3} />
+						<Divider style={styles.divider} color={theme.brand} width={3} />
 					</View>
 					<View style={styles.sectionContainer}>
 						<Text style={styles.sectionLabel}>Abilities</Text>
@@ -378,16 +395,34 @@ const MonsterDetailScreen = ({ route }) => {
 					)}
 					{monster.desc && (
 						<View style={styles.sectionContainer}>
-							<Divider
-								style={styles.divider}
-								color={theme.paragraph}
-								width={3}
-							/>
+							<Divider style={styles.divider} color={theme.brand} width={3} />
 							<Text style={styles.sectionLabel}>Notes</Text>
 							<Text style={styles.statTxt}>{monster.desc}</Text>
 						</View>
 					)}
 				</ScrollView>
+				<CampaignPicker isVisible={isModalVisible} onClose={onModalClose}>
+					{campaigns.length === 0 ? (
+						<CampaignListItem
+							variant='empty'
+							navigation={navigation}
+							onClose={onModalClose}
+						/>
+					) : (
+						<FlatList
+							data={campaigns}
+							renderItem={({ item }) => (
+								<CampaignListItem
+									item={item}
+									monster={monster}
+									navigation={navigation}
+									onClose={onModalClose}
+								/>
+							)}
+							keyExtractor={(item) => item._id}
+						/>
+					)}
+				</CampaignPicker>
 			</ImageBackground>
 		</View>
 	);

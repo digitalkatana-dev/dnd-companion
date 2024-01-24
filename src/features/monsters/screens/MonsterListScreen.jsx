@@ -5,7 +5,6 @@ import {
 	Text,
 	View,
 } from 'react-native';
-import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	setPage,
@@ -14,7 +13,8 @@ import {
 	clearMonsters,
 } from '../../../redux/slices/monsterSlice';
 import Button from '../../../components/Button';
-import MonsterListItem from '../components/MonsterListItem';
+import MonsterListItem from '../../../components/MonsterListItem';
+import Filter from '../components/Filter';
 import Footer from '../components/Footer';
 
 const MonsterListScreen = ({ navigation }) => {
@@ -37,14 +37,6 @@ const MonsterListScreen = ({ navigation }) => {
 		navigation.navigate('MonsterDetail', { monster: item });
 	};
 
-	const initialLoad = useCallback(() => {
-		handleLoadMore();
-	}, []);
-
-	useEffect(() => {
-		initialLoad();
-	}, []);
-
 	const styles = StyleSheet.create({
 		canvas: {
 			flex: 1,
@@ -55,30 +47,49 @@ const MonsterListScreen = ({ navigation }) => {
 			resizeMode: 'cover',
 			justifyContent: 'center',
 		},
-		spacer: {
-			marginVertical: 15,
+		buttonContainer: {
+			padding: 20,
+		},
+		empty: {
+			color: theme.brand,
+			fontWeight: 'bold',
+			fontSize: 15,
+			textAlign: 'center',
 		},
 	});
 
 	return (
 		<View style={styles.canvas}>
 			<ImageBackground
-				source={require('../../../../assets/parchment-dark.png')}
+				source={require('../../../../assets/parchment.jpg')}
 				style={styles.background}
 			>
-				{/* <Button title='Load monsters' onPress={handleClick} /> */}
-				<Button label='Clear monsters' onPress={handleClear} />
-				<View style={styles.spacer} />
-				<FlatList
-					data={monsters}
-					renderItem={({ item }) => (
-						<MonsterListItem item={item} onPress={() => handlePress(item)} />
-					)}
-					keyExtractor={(item) => item.slug}
-					ListFooterComponent={<Footer />}
-					onEndReached={handleLoadMore}
-					onEndReachedThreshold={0}
-				/>
+				{/* <Button label='Clear Monsters' onPress={handleClear} /> */}
+				{monsters.length === 0 ? (
+					<View style={styles.buttonContainer}>
+						<Text style={styles.empty}>
+							No monsters in sight, I think we're safe...
+						</Text>
+						<Button label='Get Monsters' onPress={handleLoadMore} />
+					</View>
+				) : (
+					<>
+						<Filter />
+						<FlatList
+							data={monsters}
+							renderItem={({ item }) => (
+								<MonsterListItem
+									item={item}
+									onPress={() => handlePress(item)}
+								/>
+							)}
+							keyExtractor={(item) => item.slug}
+							ListFooterComponent={<Footer />}
+							onEndReached={handleLoadMore}
+							onEndReachedThreshold={0}
+						/>
+					</>
+				)}
 			</ImageBackground>
 		</View>
 	);

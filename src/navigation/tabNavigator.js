@@ -3,6 +3,7 @@ import { FontAwesome5, Fontisto } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 import { MonsterNavigator } from './monsterNavigator';
 import { CampaignNavigator } from './campaignNavigator';
+import { ProfileNavigator } from './profileNavigator';
 
 const AppTabs = createBottomTabNavigator();
 export const TabNavigator = () => {
@@ -13,6 +14,7 @@ export const TabNavigator = () => {
 		const TAB_ICON = {
 			Monsters: 'dragon',
 			Campaigns: 'map',
+			Profile: 'hat-wizard',
 		};
 		const iconName = TAB_ICON[route.name];
 
@@ -20,6 +22,7 @@ export const TabNavigator = () => {
 			const iconComponents = {
 				Monsters: FontAwesome5,
 				Campaigns: Fontisto,
+				Profile: FontAwesome5,
 			};
 
 			const IconComponent = iconComponents[route.name];
@@ -39,15 +42,15 @@ export const TabNavigator = () => {
 		};
 
 		const tabBarStyle = user
-			? { backgroundColor: '#051625' }
+			? { backgroundColor: theme.primary }
 			: { display: 'none' };
 
 		return {
 			headerShown: false,
 			tabBarIcon,
 			tabBarStyle,
-			tabBarActiveTintColor: 'goldenrod',
-			tabBarInactiveTintColor: 'whitesmoke',
+			tabBarActiveTintColor: theme.paragraph,
+			tabBarInactiveTintColor: theme.heading,
 			swipeEnabled: false,
 		};
 	};
@@ -56,6 +59,7 @@ export const TabNavigator = () => {
 		<AppTabs.Navigator screenOptions={createScreenOptions}>
 			<AppTabs.Screen name='Monsters' component={MonsterNavigator} />
 			<AppTabs.Screen name='Campaigns' component={CampaignNavigator} />
+			<AppTabs.Screen name='Profile' component={ProfileNavigator} />
 		</AppTabs.Navigator>
 	);
 };

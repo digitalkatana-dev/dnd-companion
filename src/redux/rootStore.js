@@ -13,12 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import themeReducer from './slices/themeSlice';
 import userReducer from './slices/userSlice';
 import monsterReducer from './slices/monsterSlice';
-
-const themePersistConfig = {
-	key: 'theme',
-	storage: AsyncStorage,
-	// whitelist: ['user'],
-};
+import campaignReducer from './slices/campaignSlice';
 
 const userPersistConfig = {
 	key: 'user',
@@ -32,12 +27,19 @@ const monsterPersistConfig = {
 	// whitelist: ['monsters'],
 };
 
+const campaignPersistConfig = {
+	key: 'campaign',
+	storage: AsyncStorage,
+	// whitelist: ['campaigns'],
+};
+
 export const store = configureStore({
 	reducer: {
 		theme: themeReducer,
-		// user: persistReducer(userPersistConfig, userReducer),
-		user: userReducer,
+		// user: userReducer,
+		user: persistReducer(userPersistConfig, userReducer),
 		monster: persistReducer(monsterPersistConfig, monsterReducer),
+		campaigns: persistReducer(campaignPersistConfig, campaignReducer),
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({
