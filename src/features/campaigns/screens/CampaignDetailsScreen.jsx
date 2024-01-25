@@ -21,6 +21,13 @@ const CampaignDetailsScreen = ({ route, navigation }) => {
 		navigation.navigate('CampaignList');
 	};
 
+	const handlePress = (item) => {
+		navigation.navigate('CampaignMonster', {
+			monster: item,
+			campaign: campaign,
+		});
+	};
+
 	const styles = StyleSheet.create({
 		canvas: {
 			flex: 1,
@@ -40,6 +47,7 @@ const CampaignDetailsScreen = ({ route, navigation }) => {
 		},
 		buttonLabel: {
 			color: theme.brand,
+			fontSize: 12,
 		},
 		container: {
 			flex: 1,
@@ -105,7 +113,12 @@ const CampaignDetailsScreen = ({ route, navigation }) => {
 					) : (
 						<FlatList
 							data={campaign.monsters}
-							renderItem={({ item }) => <MonsterListItem item={item} />}
+							renderItem={({ item }) => (
+								<MonsterListItem
+									item={item}
+									onPress={() => handlePress(item)}
+								/>
+							)}
 							keyExtractor={(item) => item.slug}
 						/>
 					)}

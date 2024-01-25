@@ -7,6 +7,9 @@ const MonsterListItem = ({ item, onPress }) => {
 		listItem: {
 			backgroundColor: 'transparent',
 		},
+		avatar: {
+			objectFit: 'contain',
+		},
 		title: {
 			color: 'brown',
 			fontFamily: 'Creepster_400Regular',
@@ -16,7 +19,12 @@ const MonsterListItem = ({ item, onPress }) => {
 	return (
 		<TouchableOpacity onPress={onPress}>
 			<ListItem containerStyle={styles.listItem} bottomDivider>
-				<Avatar rounded source={{ uri: item.img_main }} />
+				<Avatar
+					size={40}
+					avatarStyle={styles.avatar}
+					source={{ uri: item.img_main }}
+					rounded
+				/>
 				<ListItem.Content>
 					<ListItem.Title style={styles.title}>{item.name}</ListItem.Title>
 					<ListItem.Subtitle>{`${item.type}   ${capitalizeWords(

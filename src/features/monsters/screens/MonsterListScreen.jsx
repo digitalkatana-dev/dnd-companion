@@ -15,6 +15,7 @@ import {
 import Button from '../../../components/Button';
 import MonsterListItem from '../../../components/MonsterListItem';
 import Filter from '../components/Filter';
+import Empty from '../components/Empty';
 import Footer from '../components/Footer';
 
 const MonsterListScreen = ({ navigation }) => {
@@ -47,14 +48,14 @@ const MonsterListScreen = ({ navigation }) => {
 			resizeMode: 'cover',
 			justifyContent: 'center',
 		},
-		buttonContainer: {
-			padding: 20,
+		container: {
+			flex: 1,
+			paddingTop: 20,
+			paddingHorizontal: 20,
+			justifyContent: 'center',
 		},
-		empty: {
-			color: theme.brand,
-			fontWeight: 'bold',
-			fontSize: 15,
-			textAlign: 'center',
+		buttonContainer: {
+			paddingHorizontal: 30,
 		},
 	});
 
@@ -64,17 +65,12 @@ const MonsterListScreen = ({ navigation }) => {
 				source={require('../../../../assets/parchment.jpg')}
 				style={styles.background}
 			>
+				<Filter />
 				{/* <Button label='Clear Monsters' onPress={handleClear} /> */}
-				{monsters.length === 0 ? (
-					<View style={styles.buttonContainer}>
-						<Text style={styles.empty}>
-							No monsters in sight, I think we're safe...
-						</Text>
-						<Button label='Get Monsters' onPress={handleLoadMore} />
-					</View>
-				) : (
-					<>
-						<Filter />
+				<View style={styles.container}>
+					{monsters.length === 0 ? (
+						<Empty />
+					) : (
 						<FlatList
 							data={monsters}
 							renderItem={({ item }) => (
@@ -85,11 +81,16 @@ const MonsterListScreen = ({ navigation }) => {
 							)}
 							keyExtractor={(item) => item.slug}
 							ListFooterComponent={<Footer />}
-							onEndReached={handleLoadMore}
+							onEndReached={page !== 0 && handleLoadMore}
 							onEndReachedThreshold={0}
 						/>
-					</>
-				)}
+					)}
+					{page === 0 && (
+						<View style={styles.buttonContainer}>
+							<Button label='Get Monsters' onPress={handleLoadMore} />
+						</View>
+					)}
+				</View>
 			</ImageBackground>
 		</View>
 	);

@@ -8,19 +8,14 @@ import {
 	View,
 } from 'react-native';
 import { Divider } from '@rneui/themed';
-import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCampaigns } from '../../../redux/slices/campaignSlice';
 import { capitalizeWords } from '../../../util/helpers';
+import { addOrRemoveMonster } from '../../../redux/slices/campaignSlice';
 import IconButton from '../../../components/IconButton';
-import CampaignPicker from '../../../components/CampaignPicker';
-import CampaignListItem from '../../../components/CampaignListItem';
 
-const MonsterDetailScreen = ({ route, navigation }) => {
-	const { monster } = route.params;
+const CampaignMonsterScreen = ({ route, navigation }) => {
+	const { monster, campaign } = route.params;
 	const theme = useSelector((state) => state.theme);
-	const { campaigns } = useSelector((state) => state.campaigns);
-	const [isModalVisible, setIsModalVisible] = useState(false);
 	const dispatch = useDispatch();
 
 	const speed = () => {
@@ -53,13 +48,13 @@ const MonsterDetailScreen = ({ route, navigation }) => {
 		return elements;
 	};
 
-	const onAddToCampaign = () => {
-		setIsModalVisible(true);
-		dispatch(getCampaigns());
-	};
-
-	const onModalClose = () => {
-		setIsModalVisible(false);
+	const onRemoveFromCampaign = () => {
+		const data = {
+			campaignId: campaign._id,
+			monster,
+		};
+		dispatch(addOrRemoveMonster(data));
+		navigation.navigate('CampaignList');
 	};
 
 	const styles = StyleSheet.create({
@@ -71,11 +66,20 @@ const MonsterDetailScreen = ({ route, navigation }) => {
 			flex: 1,
 			resizeMode: 'cover',
 		},
+		screenHead: {
+			flexDirection: 'row',
+			padding: 20,
+			justifyContent: 'space-between',
+			alignItems: 'center',
+		},
+		campaignName: {
+			color: theme.brand,
+			fontFamily: 'AlegreyaSC_700Bold',
+			fontSize: 17,
+		},
 		buttonContainer: {
 			flexDirection: 'row',
 			alignItems: 'center',
-			alignSelf: 'flex-end',
-			margin: theme.spacing,
 			gap: 5,
 		},
 		buttonLabel: {
@@ -169,14 +173,17 @@ const MonsterDetailScreen = ({ route, navigation }) => {
 				source={require('../../../../assets/parchment.jpg')}
 				style={styles.background}
 			>
-				<View style={styles.buttonContainer}>
-					<Text style={styles.buttonLabel}>Add to Campaign</Text>
-					<IconButton
-						icon='add-circle-outline'
-						size={25}
-						color={theme.brand}
-						onPress={onAddToCampaign}
-					/>
+				<View style={styles.screenHead}>
+					<Text style={styles.campaignName}>{campaign.name}</Text>
+					<View style={styles.buttonContainer}>
+						<Text style={styles.buttonLabel}>Remove from Campaign</Text>
+						<IconButton
+							icon='remove-circle-outline'
+							size={25}
+							color={theme.brand}
+							onPress={onRemoveFromCampaign}
+						/>
+					</View>
 				</View>
 				<ScrollView contentContainerStyle={styles.scroll}>
 					<View style={styles.statContainer}>
@@ -403,31 +410,9 @@ const MonsterDetailScreen = ({ route, navigation }) => {
 						</View>
 					)}
 				</ScrollView>
-				<CampaignPicker isVisible={isModalVisible} onClose={onModalClose}>
-					{campaigns.length === 0 ? (
-						<CampaignListItem
-							variant='empty'
-							navigation={navigation}
-							onClose={onModalClose}
-						/>
-					) : (
-						<FlatList
-							data={campaigns}
-							renderItem={({ item }) => (
-								<CampaignListItem
-									item={item}
-									monster={monster}
-									navigation={navigation}
-									onClose={onModalClose}
-								/>
-							)}
-							keyExtractor={(item) => item._id}
-						/>
-					)}
-				</CampaignPicker>
 			</ImageBackground>
 		</View>
 	);
 };
 
-export default MonsterDetailScreen;
+export default CampaignMonsterScreen;

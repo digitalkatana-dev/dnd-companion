@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import CampaignListScreen from '../features/campaigns/screens/CampaignListScreen';
 import CampaignDetailsScreen from '../features/campaigns/screens/CampaignDetailsScreen';
+import CampaignMonsterScreen from '../features/campaigns/screens/CampaignMonsterScreen';
 
 const CampaignStack = createNativeStackNavigator();
 export const CampaignNavigator = () => {
@@ -13,6 +14,10 @@ export const CampaignNavigator = () => {
 			<CampaignStack.Screen
 				name='CampaignDetails'
 				component={CampaignDetailsScreen}
+			/>
+			<CampaignStack.Screen
+				name='CampaignMonster'
+				component={CampaignMonsterScreen}
 			/>
 		</CampaignStack.Navigator>
 	);

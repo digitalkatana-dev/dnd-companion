@@ -6,13 +6,17 @@ import {
 	View,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import { setPage, filterMonsters } from '../../../redux/slices/monsterSlice';
 import { alphabet } from '../../../util/data';
 
 const Filter = () => {
 	const theme = useSelector((state) => state.theme);
 	const dispatch = useDispatch();
 
-	const handleFilter = (item) => {};
+	const handleFilter = (searchTerm) => {
+		dispatch(setPage(0));
+		dispatch(filterMonsters(searchTerm));
+	};
 
 	const styles = StyleSheet.create({
 		canvas: {
