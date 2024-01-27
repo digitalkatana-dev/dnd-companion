@@ -5,20 +5,22 @@ import {
 	TextInput,
 	View,
 } from 'react-native';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-	setEmail,
-	generatePasswordToken,
+	setPassword,
+	resetWithToken,
 	clearSuccess,
 	clearErrors,
 } from '../../../redux/slices/userSlice';
 import Button from '../../../components/Button';
 
-const ForgotPasswordScreen = ({ navigation }) => {
+const ResetPasswordScreen = ({ navigation }) => {
 	const theme = useSelector((state) => state.theme);
-	const { email, success, errors } = useSelector((state) => state.user);
+	const { password, resetToken, success, errors } = useSelector(
+		(state) => state.user
+	);
 	const dispatch = useDispatch();
 
 	const handleFocus = () => {
@@ -26,21 +28,22 @@ const ForgotPasswordScreen = ({ navigation }) => {
 	};
 
 	const handleChange = (text) => {
-		dispatch(setEmail(text));
+		dispatch(setPassword(text));
 	};
 
 	const handleSubmit = () => {
 		const data = {
-			email,
+			token: resetToken,
+			password,
 		};
 
-		dispatch(generatePasswordToken(data));
+		dispatch(resetWithToken(data));
 	};
 
 	const handleSuccess = useCallback(() => {
 		if (success) {
 			setTimeout(() => {
-				navigation.navigate('ResetPassword');
+				navigation.navigate('Auth');
 				dispatch(clearSuccess());
 			}, 7000);
 		}
@@ -125,23 +128,23 @@ const ForgotPasswordScreen = ({ navigation }) => {
 				source={require('../../../../assets/doors_of_durin.jpg')}
 				style={styles.background}
 			>
-				<Text style={styles.quote}>Forgot Password</Text>
+				<Text style={styles.quote}>Reset Password</Text>
 				<View style={styles.icon_container}>
-					<FontAwesome5 name='question-circle' size={55} style={styles.icon} />
+					<MaterialIcons name='lock-reset' size={55} style={styles.icon} />
 				</View>
 				<>
 					<View style={styles.formControl}>
 						<TextInput
-							keyboardType='email-address'
-							placeholder='Email'
+							secureTextEntry={true}
+							placeholder='Password'
 							style={styles.input}
-							value={email}
+							value={password}
 							onChangeText={handleChange}
 							onFocus={handleFocus}
 						/>
-						{errors?.email && (
+						{errors?.password && (
 							<View style={styles.errorContainer}>
-								<Text style={styles.error}>{errors?.email}</Text>
+								<Text style={styles.error}>{errors?.password}</Text>
 							</View>
 						)}
 					</View>
@@ -164,4 +167,4 @@ const ForgotPasswordScreen = ({ navigation }) => {
 	);
 };
 
-export default ForgotPasswordScreen;
+export default ResetPasswordScreen;

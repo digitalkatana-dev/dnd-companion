@@ -3,18 +3,17 @@ import {
 	createEntityAdapter,
 	createSlice,
 } from '@reduxjs/toolkit';
-import { getUser, logout } from './userSlice';
+import { logout } from './userSlice';
 import companionApi from '../../api/companionApi';
 
 export const createCampaign = createAsyncThunk(
 	'campaign/create_campaign',
-	async (data, { rejectWithValue, dispatch, getState }) => {
+	async (data, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await companionApi.post('/campaigns', data);
 			const { success } = res.data;
 			if (success) {
-				const user = getState().user.user;
-				dispatch(getCampaigns(user._id));
+				dispatch(getCampaigns(data.createdBy));
 			}
 			return success;
 		} catch (err) {
@@ -25,10 +24,9 @@ export const createCampaign = createAsyncThunk(
 
 export const getCampaigns = createAsyncThunk(
 	'campaign/get_campaigns',
-	async (data, { rejectWithValue, getState }) => {
+	async (data, { rejectWithValue }) => {
 		try {
-			const user = getState().user.user;
-			const res = await companionApi.get(`/campaigns/?createdBy=${user._id}`);
+			const res = await companionApi.get(`/campaigns/?createdBy=${data}`);
 			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -40,8 +38,8 @@ export const updateCampaign = createAsyncThunk();
 
 export const addOrRemoveMonster = createAsyncThunk(
 	'campaign/add_remove_monster',
-	async (data, { rejectWithValue, dispatch, getState }) => {
-		const { campaignId } = data;
+	async (data, { rejectWithValue, dispatch }) => {
+		const { campaignId, user } = data;
 		try {
 			const res = await companionApi.put(
 				`/campaigns/${campaignId}/monsters`,
@@ -49,10 +47,9 @@ export const addOrRemoveMonster = createAsyncThunk(
 			);
 			const { success } = res.data;
 			if (success) {
-				const user = getState().user.user;
-				dispatch(getCampaigns(user._id));
+				dispatch(getCampaigns(user));
 			}
-			return success;
+			return res.data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
 		}
@@ -61,13 +58,13 @@ export const addOrRemoveMonster = createAsyncThunk(
 
 export const deleteCampaign = createAsyncThunk(
 	'campaign/delete_campaign',
-	async (data, { rejectWithValue, dispatch, getState }) => {
+	async (data, { rejectWithValue, dispatch }) => {
+		const { id, user } = data;
 		try {
-			const res = await companionApi.delete(`/campaigns/${data}`);
+			const res = await companionApi.delete(`/campaigns/${id}`);
 			const { success } = res.data;
 			if (success) {
-				const user = getState().user.user;
-				dispatch(getUser(user._id));
+				dispatch(getCampaigns(user));
 			}
 			return success;
 		} catch (err) {
@@ -81,6 +78,7 @@ const initialState = campaignAdapter.getInitialState({
 	loading: false,
 	name: '',
 	campaigns: [],
+	selectedCampaign: null,
 	success: null,
 	errors: null,
 });
@@ -94,6 +92,9 @@ export const campaignSlice = createSlice({
 		},
 		setCampaigns: (state, action) => {
 			state.campaigns = action.payload;
+		},
+		setSelectedCampaign: (state, action) => {
+			state.selectedCampaign = action.payload;
 		},
 		clearSuccess: (state) => {
 			state.success = null;
@@ -135,7 +136,8 @@ export const campaignSlice = createSlice({
 			})
 			.addCase(addOrRemoveMonster.fulfilled, (state, action) => {
 				state.loading = false;
-				state.success = action.payload;
+				state.success = action.payload.success;
+				state.selectedCampaign = action.payload.updated;
 			})
 			.addCase(addOrRemoveMonster.rejected, (state, action) => {
 				state.loading = false;
@@ -164,7 +166,12 @@ export const campaignSlice = createSlice({
 	},
 });
 
-export const { setName, setCampaigns, clearSuccess, clearErrors } =
-	campaignSlice.actions;
+export const {
+	setName,
+	setCampaigns,
+	setSelectedCampaign,
+	clearSuccess,
+	clearErrors,
+} = campaignSlice.actions;
 
 export default campaignSlice.reducer;

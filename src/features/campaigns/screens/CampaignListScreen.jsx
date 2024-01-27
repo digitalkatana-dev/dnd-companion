@@ -7,14 +7,27 @@ import {
 	View,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { setName, createCampaign } from '../../../redux/slices/campaignSlice';
+import {
+	setName,
+	createCampaign,
+	setSelectedCampaign,
+	clearErrors,
+} from '../../../redux/slices/campaignSlice';
+import Loading from '../../../components/Loading';
 import IconButton from '../../../components/IconButton';
 import Button from '../../../components/Button';
 
 const CampaignListScreen = ({ navigation }) => {
 	const theme = useSelector((state) => state.theme);
-	const { name, campaigns } = useSelector((state) => state.campaigns);
+	const { user } = useSelector((state) => state.user);
+	const { loading, name, campaigns, errors } = useSelector(
+		(state) => state.campaign
+	);
 	const dispatch = useDispatch();
+
+	const handleFocus = () => {
+		dispatch(clearErrors());
+	};
 
 	const handleChange = (text) => {
 		dispatch(setName(text));
@@ -23,12 +36,14 @@ const CampaignListScreen = ({ navigation }) => {
 	const handleSubmit = () => {
 		const data = {
 			name,
+			createdBy: user._id,
 		};
 		dispatch(createCampaign(data));
 	};
 
 	const handlePress = (item) => {
-		navigation.navigate('CampaignDetails', { campaign: item });
+		dispatch(setSelectedCampaign(item));
+		navigation.navigate('CampaignDetails');
 	};
 
 	const styles = StyleSheet.create({
@@ -41,12 +56,15 @@ const CampaignListScreen = ({ navigation }) => {
 			resizeMode: 'cover',
 			justifyContent: 'center',
 		},
+		formControl: {
+			flexDirection: 'column',
+		},
 		formContainer: {
 			flexDirection: 'row',
 			justifyContent: 'center',
 			alignItems: 'center',
-			// padding: 10,
 			margin: 20,
+			marginBottom: 0,
 		},
 		input: {
 			flex: 1,
@@ -68,27 +86,58 @@ const CampaignListScreen = ({ navigation }) => {
 			fontSize: 15,
 			textAlign: 'center',
 		},
+		button: {
+			marginVertical: theme.spacing,
+			borderRadius: 20,
+		},
+		button_label: {
+			color: theme.brand,
+			fontFamily: 'Creepster_400Regular',
+			fontSize: 20,
+			textAlign: 'center',
+		},
+		errorContainer: {
+			alignItems: 'center',
+		},
+		error: {
+			color: theme.error,
+			fontWeight: 'bold',
+		},
 	});
 
 	return (
 		<View style={styles.canvas}>
+			{loading && <Loading />}
 			<ImageBackground
 				source={require('../../../../assets/parchment.jpg')}
 				style={styles.background}
 			>
-				<View style={styles.formContainer}>
-					<TextInput
-						placeholder='New Campaign'
-						style={styles.input}
-						value={name}
-						onChangeText={handleChange}
-					/>
-					<IconButton
-						icon='add-circle-outline'
-						size={30}
-						color={theme.brand}
-						onPress={handleSubmit}
-					/>
+				<View style={styles.formControl}>
+					<View style={styles.formContainer}>
+						<TextInput
+							placeholder='New Campaign'
+							style={styles.input}
+							value={name}
+							onFocus={handleFocus}
+							onChangeText={handleChange}
+						/>
+						<IconButton
+							icon='add-circle-outline'
+							size={30}
+							color={theme.brand}
+							onPress={handleSubmit}
+						/>
+					</View>
+					{errors?.name && (
+						<View style={styles.errorContainer}>
+							<Text style={styles.error}>{errors?.name}</Text>
+						</View>
+					)}
+					{errors?.message && (
+						<View style={styles.errorContainer}>
+							<Text style={styles.error}>{errors?.message}</Text>
+						</View>
+					)}
 				</View>
 				<View style={styles.listContainer}>
 					{campaigns.length === 0 ? (
@@ -100,7 +149,8 @@ const CampaignListScreen = ({ navigation }) => {
 							data={campaigns}
 							renderItem={({ item }) => (
 								<Button
-									variant='text'
+									btnStyle={styles.button}
+									labelStyle={styles.button_label}
 									label={item.name}
 									onPress={() => handlePress(item)}
 								/>

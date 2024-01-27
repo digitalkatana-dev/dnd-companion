@@ -8,23 +8,26 @@ import {
 	View,
 } from 'react-native';
 import { Divider } from '@rneui/themed';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedMonster } from '../../../redux/slices/monsterSlice';
 import { getCampaigns } from '../../../redux/slices/campaignSlice';
 import { capitalizeWords } from '../../../util/helpers';
+import Loading from '../../../components/Loading';
 import IconButton from '../../../components/IconButton';
 import CampaignPicker from '../../../components/CampaignPicker';
 import CampaignListItem from '../../../components/CampaignListItem';
 
-const MonsterDetailScreen = ({ route, navigation }) => {
-	const { monster } = route.params;
+const MonsterDetailScreen = ({ navigation }) => {
 	const theme = useSelector((state) => state.theme);
-	const { campaigns } = useSelector((state) => state.campaigns);
+	const { user } = useSelector((state) => state.user);
+	const { loading, selectedMonster } = useSelector((state) => state.monster);
+	const { campaigns } = useSelector((state) => state.campaign);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const dispatch = useDispatch();
 
 	const speed = () => {
-		const monsterSpeed = monster.speed;
+		const monsterSpeed = selectedMonster?.speed;
 		const elements = [];
 
 		for (const key in monsterSpeed) {
@@ -39,7 +42,7 @@ const MonsterDetailScreen = ({ route, navigation }) => {
 	};
 
 	const skills = () => {
-		const monsterSkills = monster.skills;
+		const monsterSkills = selectedMonster?.skills;
 		const elements = [];
 
 		for (const key in monsterSkills) {
@@ -55,7 +58,7 @@ const MonsterDetailScreen = ({ route, navigation }) => {
 
 	const onAddToCampaign = () => {
 		setIsModalVisible(true);
-		dispatch(getCampaigns());
+		dispatch(getCampaigns(user._id));
 	};
 
 	const onModalClose = () => {
@@ -163,8 +166,21 @@ const MonsterDetailScreen = ({ route, navigation }) => {
 		},
 	});
 
+	const clearMonster = useCallback(() => {
+		navigation.addListener('beforeRemove', () => {
+			setTimeout(() => {
+				dispatch(setSelectedMonster(null));
+			}, 1500);
+		});
+	}, [navigation, dispatch]);
+
+	useEffect(() => {
+		return clearMonster();
+	}, [clearMonster()]);
+
 	return (
 		<View style={styles.canvas}>
+			{loading && <Loading />}
 			<ImageBackground
 				source={require('../../../../assets/parchment.jpg')}
 				style={styles.background}
@@ -182,34 +198,36 @@ const MonsterDetailScreen = ({ route, navigation }) => {
 					<View style={styles.statContainer}>
 						<View style={styles.identityContainer}>
 							<View>
-								<Text style={styles.name}>{monster.name}</Text>
+								<Text style={styles.name}>{selectedMonster?.name}</Text>
 								<Text style={styles.vitals}>
-									{`${monster.size} ${monster.type}, ${
-										monster.subtype
-											? `${capitalizeWords(monster.subtype)}, `
+									{`${selectedMonster?.size} ${selectedMonster?.type}, ${
+										selectedMonster?.subtype
+											? `${capitalizeWords(selectedMonster?.subtype)}, `
 											: ''
-									}${capitalizeWords(monster.alignment)} `}
+									}${capitalizeWords(selectedMonster?.alignment)} `}
 								</Text>
 							</View>
-							{monster.img_main && (
+							{selectedMonster?.img_main && (
 								<Image
 									style={styles.monsterImg}
-									source={{ uri: monster.img_main }}
+									source={{ uri: selectedMonster?.img_main }}
 								/>
 							)}
 						</View>
 						<Divider style={styles.divider} color={theme.brand} width={3} />
 						<View style={styles.statRow}>
 							<Text style={styles.statLabel}>Armor Class</Text>
-							<Text style={styles.statTxt}>{`${monster.armor_class} ${
-								monster.armor_desc ? `(${monster.armor_desc})` : ''
+							<Text style={styles.statTxt}>{`${selectedMonster?.armor_class} ${
+								selectedMonster?.armor_desc
+									? `(${selectedMonster?.armor_desc})`
+									: ''
 							}`}</Text>
 						</View>
 						<View style={styles.statRow}>
 							<Text style={styles.statLabel}>Hit Points</Text>
 							<Text
 								style={styles.statTxt}
-							>{`${monster.hit_points} (${monster.hit_dice})`}</Text>
+							>{`${selectedMonster?.hit_points} (${selectedMonster?.hit_dice})`}</Text>
 						</View>
 						<View style={styles.statRow}>
 							<Text style={styles.statLabel}>Speed</Text>
@@ -219,119 +237,124 @@ const MonsterDetailScreen = ({ route, navigation }) => {
 						<View style={styles.statBlockRow}>
 							<View style={styles.statStack}>
 								<Text style={styles.statLabel}>STR</Text>
-								<Text style={styles.statTxt}>{monster.strength}</Text>
+								<Text style={styles.statTxt}>{selectedMonster?.strength}</Text>
 							</View>
 							<View style={styles.statStack}>
 								<Text style={styles.statLabel}>DEX</Text>
-								<Text style={styles.statTxt}>{monster.dexterity}</Text>
+								<Text style={styles.statTxt}>{selectedMonster?.dexterity}</Text>
 							</View>
 							<View style={styles.statStack}>
 								<Text style={styles.statLabel}>CON</Text>
-								<Text style={styles.statTxt}>{monster.constitution}</Text>
+								<Text style={styles.statTxt}>
+									{selectedMonster?.constitution}
+								</Text>
 							</View>
 							<View style={styles.statStack}>
 								<Text style={styles.statLabel}>INT</Text>
-								<Text style={styles.statTxt}>{monster.intelligence}</Text>
+								<Text style={styles.statTxt}>
+									{selectedMonster?.intelligence}
+								</Text>
 							</View>
 							<View style={styles.statStack}>
 								<Text style={styles.statLabel}>WIS</Text>
-								<Text style={styles.statTxt}>{monster.wisdom}</Text>
+								<Text style={styles.statTxt}>{selectedMonster?.wisdom}</Text>
 							</View>
 							<View style={styles.statStack}>
 								<Text style={styles.statLabel}>CHA</Text>
-								<Text style={styles.statTxt}>{monster.charisma}</Text>
+								<Text style={styles.statTxt}>{selectedMonster?.charisma}</Text>
 							</View>
 						</View>
 						<Divider style={styles.divider} color={theme.brand} width={3} />
 						<View style={styles.statRow}>
 							<Text style={styles.statLabel}>Saving Throws</Text>
-							{monster.strength_save && (
+							{selectedMonster?.strength_save && (
 								<Text
 									style={[styles.statTxt, styles.hspace]}
-								>{`STR +${monster.strength_save};`}</Text>
+								>{`STR +${selectedMonster?.strength_save};`}</Text>
 							)}
-							{monster.dexterity_save && (
+							{selectedMonster?.dexterity_save && (
 								<Text
 									style={[styles.statTxt, styles.hspace]}
-								>{`DEX +${monster.dexterity_save};`}</Text>
+								>{`DEX +${selectedMonster?.dexterity_save};`}</Text>
 							)}
-							{monster.constitution_save && (
+							{selectedMonster?.constitution_save && (
 								<Text
 									style={[styles.statTxt, styles.hspace]}
-								>{`CON +${monster.constitution_save};`}</Text>
+								>{`CON +${selectedMonster?.constitution_save};`}</Text>
 							)}
-							{monster.intelligence_save && (
+							{selectedMonster?.intelligence_save && (
 								<Text
 									style={[styles.statTxt, styles.hspace]}
-								>{`INT +${monster.intelligence_save};`}</Text>
+								>{`INT +${selectedMonster?.intelligence_save};`}</Text>
 							)}
-							{monster.wisdom_save && (
+							{selectedMonster?.wisdom_save && (
 								<Text
 									style={[styles.statTxt, styles.hspace]}
-								>{`WIS +${monster.wisdom_save};`}</Text>
+								>{`WIS +${selectedMonster?.wisdom_save};`}</Text>
 							)}
-							{monster.charisma_save && (
+							{selectedMonster?.charisma_save && (
 								<Text
 									style={[styles.statTxt, styles.hspace]}
-								>{`CHA +${monster.charisma_save};`}</Text>
+								>{`CHA +${selectedMonster?.charisma_save};`}</Text>
 							)}
 						</View>
-						{monster.skills && (
+						{selectedMonster?.skills && (
 							<View style={styles.statRow}>
 								<Text style={styles.statLabel}>Skills</Text>
 								{skills()}
 							</View>
 						)}
-						{monster.damage_vulnerabilities && (
+						{selectedMonster?.damage_vulnerabilities && (
 							<View style={styles.statRow}>
 								<Text style={styles.statLabel}>Vulnerabilities</Text>
 								<Text style={styles.statTxt}>
-									{capitalizeWords(monster.damage_vulnerabilities)}
+									{capitalizeWords(selectedMonster?.damage_vulnerabilities)}
 								</Text>
 							</View>
 						)}
-						{monster.damage_resistances && (
+						{selectedMonster?.damage_resistances && (
 							<View style={styles.statRow}>
 								<Text style={styles.statLabel}>Resistances</Text>
 								<Text style={styles.statTxt}>
-									{capitalizeWords(monster.damage_resistances)}
+									{capitalizeWords(selectedMonster?.damage_resistances)}
 								</Text>
 							</View>
 						)}
-						{(monster.damage_immunities || monster.condition_immunities) && (
+						{(selectedMonster?.damage_immunities ||
+							selectedMonster?.condition_immunities) && (
 							<View style={styles.statRow}>
 								<Text style={styles.statLabel}>Immunities</Text>
 								<Text style={styles.statTxt}>
-									{monster.damage_immunities &&
-										capitalizeWords(monster.damage_immunities)}
-									{monster.condition_immunities &&
-										capitalizeWords(monster.condition_immunities)}
+									{selectedMonster?.damage_immunities &&
+										capitalizeWords(selectedMonster?.damage_immunities)}
+									{selectedMonster?.condition_immunities &&
+										capitalizeWords(selectedMonster?.condition_immunities)}
 								</Text>
 							</View>
 						)}
-						{monster.senses && (
+						{selectedMonster?.senses && (
 							<View style={styles.statRow}>
 								<Text style={styles.statLabel}>Senses</Text>
-								<Text style={styles.statTxt}>{monster.senses}</Text>
+								<Text style={styles.statTxt}>{selectedMonster?.senses}</Text>
 							</View>
 						)}
-						{monster.languages && (
+						{selectedMonster?.languages && (
 							<View style={styles.statRow}>
 								<Text style={styles.statLabel}>Languages</Text>
-								<Text style={styles.statTxt}>{monster.languages}</Text>
+								<Text style={styles.statTxt}>{selectedMonster?.languages}</Text>
 							</View>
 						)}
 						<View style={styles.statRow}>
 							<Text style={styles.statLabel}>Challenge</Text>
 							<Text
 								style={styles.statTxt}
-							>{`${monster.challenge_rating}`}</Text>
+							>{`${selectedMonster?.challenge_rating}`}</Text>
 						</View>
 						<Divider style={styles.divider} color={theme.brand} width={3} />
 					</View>
 					<View style={styles.sectionContainer}>
 						<Text style={styles.sectionLabel}>Abilities</Text>
-						{monster.special_abilities?.map((ability) => (
+						{selectedMonster?.special_abilities?.map((ability) => (
 							<View key={ability.name} style={styles.traitRow}>
 								<Text style={styles.statLabel}>{ability.name}</Text>
 								<Text style={styles.statTxt}>{ability.desc}</Text>
@@ -340,17 +363,17 @@ const MonsterDetailScreen = ({ route, navigation }) => {
 					</View>
 					<View style={styles.sectionContainer}>
 						<Text style={styles.sectionLabel}>Actions</Text>
-						{monster.actions?.map((action) => (
+						{selectedMonster?.actions?.map((action) => (
 							<View key={action.name} style={styles.traitRow}>
 								<Text style={styles.statLabel}>{action.name}</Text>
 								<Text style={styles.statTxt}>{action.desc}</Text>
 							</View>
 						))}
 					</View>
-					{monster.bonus_actions && (
+					{selectedMonster?.bonus_actions && (
 						<View style={styles.sectionContainer}>
 							<Text style={styles.sectionLabel}>Bonus Actions</Text>
-							{monster.bonus_actions?.map((action) => (
+							{selectedMonster?.bonus_actions?.map((action) => (
 								<View key={action.name} style={styles.traitRow}>
 									<Text style={styles.statLabel}>{action.name}</Text>
 									<Text style={styles.statTxt}>{action.desc}</Text>
@@ -358,13 +381,13 @@ const MonsterDetailScreen = ({ route, navigation }) => {
 							))}
 						</View>
 					)}
-					{monster.legendary_actions && (
+					{selectedMonster?.legendary_actions && (
 						<View style={styles.sectionContainer}>
 							<Text style={styles.sectionLabel}>Legendary Actions</Text>
 							<Text style={[styles.legendaryDesc, styles.statTxt]}>
-								{monster.legendary_desc}
+								{selectedMonster?.legendary_desc}
 							</Text>
-							{monster.legendary_actions?.map((action) => (
+							{selectedMonster?.legendary_actions?.map((action) => (
 								<View key={action.name} style={styles.traitRow}>
 									<Text style={styles.statLabel}>{action.name}</Text>
 									<Text style={styles.statTxt}>{action.desc}</Text>
@@ -372,10 +395,10 @@ const MonsterDetailScreen = ({ route, navigation }) => {
 							))}
 						</View>
 					)}
-					{monster.reactions && (
+					{selectedMonster?.reactions && (
 						<View style={styles.sectionContainer}>
 							<Text style={styles.sectionLabel}>Reactions</Text>
-							{monster.reactions?.map((reaction) => (
+							{selectedMonster?.reactions?.map((reaction) => (
 								<View key={reaction.name} style={styles.traitRow}>
 									<Text style={styles.statLabel}>{reaction.name}</Text>
 									<Text style={styles.statTxt}>{reaction.desc}</Text>
@@ -383,11 +406,11 @@ const MonsterDetailScreen = ({ route, navigation }) => {
 							))}
 						</View>
 					)}
-					{monster.environments && (
+					{selectedMonster?.environments && (
 						<View style={styles.sectionContainer}>
 							<Text style={styles.sectionLabel}>Where to find</Text>
 							<View style={styles.statRow}>
-								{monster.environments?.map((location) => (
+								{selectedMonster?.environments?.map((location) => (
 									<Text key={location} style={[styles.statTxt, styles.hspace]}>
 										{location}
 									</Text>
@@ -395,11 +418,11 @@ const MonsterDetailScreen = ({ route, navigation }) => {
 							</View>
 						</View>
 					)}
-					{monster.desc && (
+					{selectedMonster?.desc && (
 						<View style={styles.sectionContainer}>
 							<Divider style={styles.divider} color={theme.brand} width={3} />
 							<Text style={styles.sectionLabel}>Notes</Text>
-							<Text style={styles.statTxt}>{monster.desc}</Text>
+							<Text style={styles.statTxt}>{selectedMonster?.desc}</Text>
 						</View>
 					)}
 				</ScrollView>
@@ -416,7 +439,7 @@ const MonsterDetailScreen = ({ route, navigation }) => {
 							renderItem={({ item }) => (
 								<CampaignListItem
 									item={item}
-									monster={monster}
+									monster={selectedMonster}
 									navigation={navigation}
 									onClose={onModalClose}
 								/>

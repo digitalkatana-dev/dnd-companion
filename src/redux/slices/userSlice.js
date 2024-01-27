@@ -9,7 +9,7 @@ import companionApi from '../../api/companionApi';
 
 export const register = createAsyncThunk(
 	'user/register',
-	async (data, { rejectWithData, dispatch }) => {
+	async (data, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await companionApi.post('/users/register', data);
 			const { token, userData } = res.data;
@@ -17,14 +17,14 @@ export const register = createAsyncThunk(
 			dispatch(clearForm());
 			return userData;
 		} catch (err) {
-			return rejectWithData(err.response.data);
+			return rejectWithValue(err.response.data);
 		}
 	}
 );
 
 export const userLogin = createAsyncThunk(
 	'user/login',
-	async (data, { rejectWithData, dispatch }) => {
+	async (data, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await companionApi.post('/users/login', data);
 			const { token, userData } = res.data;
@@ -33,32 +33,61 @@ export const userLogin = createAsyncThunk(
 			dispatch(setCampaigns(userData.campaigns));
 			return userData;
 		} catch (err) {
-			return rejectWithData(err.response.data);
+			console.log(err);
+			return rejectWithValue(err.response.data);
 		}
 	}
 );
 
 export const getUser = createAsyncThunk(
 	'user/get_user',
-	async (data, { rejectWithData, dispatch }) => {
+	async (data, { rejectWithValue, dispatch }) => {
 		try {
 			const res = await companionApi.get(`/users/?id=${data}`);
 			dispatch(setCampaigns(res.data.campaigns));
 			return res.data;
 		} catch (err) {
-			return rejectWithData(err.response.data);
+			return rejectWithValue(err.response.data);
 		}
 	}
 );
 
 export const getAllUsers = createAsyncThunk(
 	'user/get_user',
-	async (data, { rejectWithData }) => {
+	async (data, { rejectWithValue }) => {
 		try {
 			const res = await companionApi.get(`/users/`);
 			return res.data;
 		} catch (err) {
-			return rejectWithData(err.response.data);
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
+export const generatePasswordToken = createAsyncThunk(
+	'user/generate_password_token',
+	async (data, { rejectWithValue }) => {
+		try {
+			const res = await companionApi.put(
+				'/users/generate-password-token',
+				data
+			);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
+
+export const resetWithToken = createAsyncThunk(
+	'user/reset_with_token',
+	async (data, { rejectWithValue }) => {
+		try {
+			const res = await companionApi.put('/users/reset-password', data);
+			const { success } = res.data;
+			return success;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
 		}
 	}
 );
@@ -77,6 +106,7 @@ const initialState = userAdapter.getInitialState({
 	login: '',
 	password: '',
 	user: null,
+	resetToken: null,
 	success: null,
 	errors: null,
 });
@@ -114,12 +144,22 @@ export const userSlice = createSlice({
 			state.login = '';
 			state.password = '';
 		},
+		clearSuccess: (state) => {
+			state.success = null;
+		},
 		clearErrors: (state) => {
 			state.errors = null;
 		},
 		logout: (state) => {
 			state.loading = false;
+			state.firstName = '';
+			state.lastName = '';
+			state.handle = '';
+			state.email = '';
+			state.login = '';
+			state.password = '';
 			state.user = null;
+			state.resetToken = null;
 			state.success = null;
 			state.errors = null;
 			AsyncStorage.removeItem('token');
@@ -163,6 +203,34 @@ export const userSlice = createSlice({
 				state.loading = false;
 				state.errors = action.payload;
 			})
+			.addCase(generatePasswordToken.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(generatePasswordToken.fulfilled, (state, action) => {
+				state.loading = false;
+				state.email = '';
+				state.success = action.payload.success;
+				state.resetToken = action.payload.resetToken;
+			})
+			.addCase(generatePasswordToken.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
+			.addCase(resetWithToken.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(resetWithToken.fulfilled, (state, action) => {
+				state.loading = false;
+				state.password = '';
+				state.success = action.payload;
+				state.resetToken = null;
+			})
+			.addCase(resetWithToken.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
 			.addCase(logout, (state) => {
 				userAdapter.removeAll(state);
 			});
@@ -177,6 +245,7 @@ export const {
 	setLogin,
 	setPassword,
 	clearForm,
+	clearSuccess,
 	clearErrors,
 	logout,
 } = userSlice.actions;

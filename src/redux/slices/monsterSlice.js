@@ -52,6 +52,7 @@ const initialState = monsterAdapter.getInitialState({
 	loading: false,
 	page: 0,
 	monsters: [],
+	selectedMonster: null,
 	errors: null,
 });
 
@@ -61,6 +62,9 @@ export const monsterSlice = createSlice({
 	reducers: {
 		setPage: (state, action) => {
 			state.page = action.payload;
+		},
+		setSelectedMonster: (state, action) => {
+			state.selectedMonster = action.payload;
 		},
 		resetPage: (state) => {
 			state.page = 0;
@@ -74,13 +78,15 @@ export const monsterSlice = createSlice({
 			.addCase(loadMonsters.pending, (state) => {
 				state.loading = true;
 				state.errors = null;
+				state.monsters = state.page - 1 <= 0 ? [] : state.monsters;
 			})
 			.addCase(loadMonsters.fulfilled, (state, action) => {
 				state.loading = false;
-				state.monsters =
-					state.page - 1 === 0
-						? action.payload
-						: [...state.monsters, ...action.payload];
+				state.monsters = [...state.monsters, ...action.payload];
+				// state.monsters =
+				// 	state.page - 1 === 0
+				// 		? action.payload
+				// 		: [...state.monsters, ...action.payload];
 			})
 			.addCase(loadMonsters.rejected, (state, action) => {
 				state.loading = false;
@@ -108,6 +114,7 @@ export const monsterSlice = createSlice({
 	},
 });
 
-export const { setPage, resetPage, clearMonsters } = monsterSlice.actions;
+export const { setPage, setSelectedMonster, resetPage, clearMonsters } =
+	monsterSlice.actions;
 
 export default monsterSlice.reducer;

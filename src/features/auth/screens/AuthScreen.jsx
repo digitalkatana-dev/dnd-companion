@@ -22,7 +22,7 @@ import {
 } from '../../../redux/slices/userSlice';
 import Button from '../../../components/Button';
 
-const AuthScreen = () => {
+const AuthScreen = ({ navigation }) => {
 	const theme = useSelector((state) => state.theme);
 	const {
 		loading,
@@ -36,10 +36,12 @@ const AuthScreen = () => {
 	} = useSelector((state) => state.user);
 	const [authType, setAuthType] = useState('login');
 	const dispatch = useDispatch();
+	let maxHeight;
 
 	const handleAuthType = () => {
 		setAuthType(authType === 'login' ? 'register' : 'login');
 		dispatch(clearForm());
+		dispatch(clearErrors());
 	};
 
 	const handleFocus = () => {
@@ -84,6 +86,30 @@ const AuthScreen = () => {
 		}
 	};
 
+	const handleForgot = () => {
+		navigation.navigate('ForgotPassword');
+	};
+
+	if (authType === 'login') {
+		if (errors?.login || errors?.password) {
+			maxHeight = 190;
+		} else {
+			maxHeight = 130;
+		}
+	} else if (authType === 'register') {
+		if (
+			errors?.firstName ||
+			errors?.lastName ||
+			errors?.handle ||
+			errors?.email ||
+			errors?.password
+		) {
+			maxHeight = 445;
+		} else {
+			maxHeight = 320;
+		}
+	}
+
 	const styles = StyleSheet.create({
 		canvas: {
 			flex: 1,
@@ -101,7 +127,10 @@ const AuthScreen = () => {
 			textAlign: 'center',
 		},
 		scroll: {
-			maxHeight: authType === 'login' ? 130 : 320,
+			maxHeight: maxHeight,
+		},
+		formControl: {
+			flexDirection: 'column',
 		},
 		input: {
 			height: 40,
@@ -123,9 +152,51 @@ const AuthScreen = () => {
 			paddingHorizontal: 10,
 			paddingVertical: 5,
 			borderRadius: 20,
+			marginVertical: 5,
 		},
 		toggleTxt: {
 			color: theme.heading,
+		},
+		toggle_btn_label: {
+			color: theme.error,
+		},
+		auth_btn_style: {
+			marginVertical: theme.spacing,
+			borderRadius: 20,
+			elevation: 10,
+			backgroundColor: theme.secondary,
+			borderWidth: 1,
+			borderColor: 'steelblue',
+		},
+		auth_btn_label: {
+			color: theme.heading,
+			fontFamily: 'Creepster_400Regular',
+			fontSize: 15,
+			marginVertical: 5,
+			textAlign: 'center',
+		},
+		link_btn: {
+			alignSelf: 'center',
+			backgroundColor: 'rgba(0,0,0,.8)',
+			paddingHorizontal: 10,
+			paddingVertical: 5,
+			borderRadius: 20,
+			marginVertical: 5,
+		},
+		link_label: {
+			color: theme.highlight,
+			fontWeight: 'bold',
+		},
+		errorContainer: {
+			alignItems: 'center',
+		},
+		error: {
+			color: theme.error,
+			fontWeight: 'bold',
+			backgroundColor: 'rgba(0,0,0,.7)',
+			paddingHorizontal: 10,
+			paddingVertical: 2.5,
+			borderRadius: 20,
 		},
 	});
 
@@ -136,73 +207,137 @@ const AuthScreen = () => {
 				style={styles.background}
 			>
 				<Text style={styles.quote}>Speak friend...</Text>
+				<View style={styles.authToggleContainer}>
+					{authType === 'login' ? (
+						<Text style={styles.toggleTxt}>Need and account? Register </Text>
+					) : (
+						authType === 'register' && (
+							<Text style={styles.toggleTxt}>
+								Already have an account? Login{' '}
+							</Text>
+						)
+					)}
+					<Button
+						labelStyle={styles.toggle_btn_label}
+						label='here'
+						onPress={handleAuthType}
+					/>
+				</View>
 				<ScrollView style={styles.scroll}>
 					{authType === 'register' && (
 						<>
-							<TextInput
-								placeholder='First Name'
-								style={styles.input}
-								value={firstName}
-								onChangeText={(text) => handleChange('first', text)}
-								onFocus={handleFocus}
-							/>
-							<TextInput
-								placeholder='Last Name'
-								style={styles.input}
-								value={lastName}
-								onChangeText={(text) => handleChange('last', text)}
-								onFocus={handleFocus}
-							/>
-							<TextInput
-								placeholder='Handle'
-								style={styles.input}
-								value={handle}
-								onChangeText={(text) => handleChange('handle', text)}
-								onFocus={handleFocus}
-							/>
-							<TextInput
-								keyboardType='email-address'
-								placeholder='Email'
-								style={styles.input}
-								value={email}
-								onChangeText={(text) => handleChange('email', text)}
-								onFocus={handleFocus}
-							/>
+							<View style={styles.formControl}>
+								<TextInput
+									placeholder='First Name'
+									style={styles.input}
+									value={firstName}
+									onChangeText={(text) => handleChange('first', text)}
+									onFocus={handleFocus}
+								/>
+								{errors?.firstName && (
+									<View style={styles.errorContainer}>
+										<Text style={styles.error}>{errors?.firstName}</Text>
+									</View>
+								)}
+							</View>
+							<View style={styles.formControl}>
+								<TextInput
+									placeholder='Last Name'
+									style={styles.input}
+									value={lastName}
+									onChangeText={(text) => handleChange('last', text)}
+									onFocus={handleFocus}
+								/>
+								{errors?.lastName && (
+									<View style={styles.errorContainer}>
+										<Text style={styles.error}>{errors?.lastName}</Text>
+									</View>
+								)}
+							</View>
+							<View style={styles.formControl}>
+								<TextInput
+									placeholder='Handle'
+									style={styles.input}
+									value={handle}
+									onChangeText={(text) => handleChange('handle', text)}
+									onFocus={handleFocus}
+								/>
+								{errors?.handle && (
+									<View style={styles.errorContainer}>
+										<Text style={styles.error}>{errors?.handle}</Text>
+									</View>
+								)}
+							</View>
+							<View style={styles.formControl}>
+								<TextInput
+									keyboardType='email-address'
+									placeholder='Email'
+									style={styles.input}
+									value={email}
+									onChangeText={(text) => handleChange('email', text)}
+									onFocus={handleFocus}
+								/>
+								{errors?.email && (
+									<View style={styles.errorContainer}>
+										<Text style={styles.error}>{errors?.email}</Text>
+									</View>
+								)}
+							</View>
 						</>
 					)}
 					{authType === 'login' && (
+						<View style={styles.formControl}>
+							<TextInput
+								placeholder='Login'
+								style={styles.input}
+								value={login}
+								onChangeText={(text) => handleChange('login', text)}
+								onFocus={handleFocus}
+							/>
+							{errors?.login && (
+								<View style={styles.errorContainer}>
+									<Text style={styles.error}>{errors?.login}</Text>
+								</View>
+							)}
+						</View>
+					)}
+					<View style={styles.formControl}>
 						<TextInput
-							placeholder='Login'
+							secureTextEntry={true}
+							placeholder='Password'
 							style={styles.input}
-							value={login}
-							onChangeText={(text) => handleChange('login', text)}
+							value={password}
+							onChangeText={(text) => handleChange('pass', text)}
 							onFocus={handleFocus}
 						/>
-					)}
-					<TextInput
-						secureTextEntry={true}
-						placeholder='Password'
-						style={styles.input}
-						value={password}
-						onChangeText={(text) => handleChange('pass', text)}
-						onFocus={handleFocus}
-					/>
+						{errors?.password && (
+							<View style={styles.errorContainer}>
+								<Text style={styles.error}>{errors?.password}</Text>
+							</View>
+						)}
+					</View>
 				</ScrollView>
 				<Text style={styles.quote}>And...</Text>
 				<View style={styles.buttonContainer}>
-					<Button variant='auth' label='Enter Here' onPress={handleSubmit} />
-					<View style={styles.authToggleContainer}>
-						{authType === 'login' ? (
-							<Text style={styles.toggleTxt}>Need and account? Register </Text>
-						) : (
-							authType === 'register' && (
-								<Text style={styles.toggleTxt}>
-									Already have an account? Login{' '}
-								</Text>
-							)
-						)}
-						<Button variant='toggle' label='here' onPress={handleAuthType} />
-					</View>
+					<Button
+						btnStyle={styles.auth_btn_style}
+						labelStyle={styles.auth_btn_label}
+						label='Enter Here'
+						onPress={handleSubmit}
+					/>
+					{errors?.message && (
+						<View style={styles.errorContainer}>
+							<Text style={styles.error}>{errors?.message}</Text>
+						</View>
+					)}
+					{authType === 'login' && (
+						<Button
+							btnStyle={styles.link_btn}
+							labelStyle={styles.link_label}
+							label='Forgot Password'
+							onPress={handleForgot}
+						/>
+					)}
 				</View>
 			</ImageBackground>
 		</View>

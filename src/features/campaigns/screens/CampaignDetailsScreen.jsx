@@ -5,27 +5,36 @@ import {
 	Text,
 	View,
 } from 'react-native';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteCampaign } from '../../../redux/slices/campaignSlice';
+import {
+	deleteCampaign,
+	setSelectedCampaign,
+} from '../../../redux/slices/campaignSlice';
+import { setSelectedMonster } from '../../../redux/slices/monsterSlice';
 import dayjs from 'dayjs';
 import IconButton from '../../../components/IconButton';
 import MonsterListItem from '../../../components/MonsterListItem';
 
-const CampaignDetailsScreen = ({ route, navigation }) => {
-	const { campaign } = route.params;
+const CampaignDetailsScreen = ({ navigation }) => {
 	const theme = useSelector((state) => state.theme);
+	const { user } = useSelector((state) => state.user);
+	const { selectedCampaign } = useSelector((state) => state.campaign);
 	const dispatch = useDispatch();
 
 	const handleDelete = () => {
-		dispatch(deleteCampaign(campaign._id));
+		const data = {
+			id: selectedCampaign?._id,
+			user: user._id,
+		};
+
+		dispatch(deleteCampaign(data));
 		navigation.navigate('CampaignList');
 	};
 
 	const handlePress = (item) => {
-		navigation.navigate('CampaignMonster', {
-			monster: item,
-			campaign: campaign,
-		});
+		dispatch(setSelectedMonster(item));
+		navigation.navigate('CampaignMonster');
 	};
 
 	const styles = StyleSheet.create({
@@ -78,6 +87,18 @@ const CampaignDetailsScreen = ({ route, navigation }) => {
 		},
 	});
 
+	const clearCampaign = useCallback(() => {
+		navigation.addListener('beforeRemove', () => {
+			setTimeout(() => {
+				dispatch(setSelectedCampaign(null));
+			}, 1500);
+		});
+	}, [navigation, dispatch]);
+
+	useEffect(() => {
+		return clearCampaign();
+	}, [clearCampaign]);
+
 	return (
 		<View style={styles.canvas}>
 			<ImageBackground
@@ -97,22 +118,22 @@ const CampaignDetailsScreen = ({ route, navigation }) => {
 					<View style={styles.header}>
 						<Text style={styles.value}>
 							<Text style={styles.label}>Name: </Text>
-							{campaign.name}
+							{selectedCampaign?.name}
 						</Text>
 						<Text style={styles.value}>
 							<Text style={styles.label}>Created: </Text>
-							{dayjs(campaign.createdAt).format('MMM/D/YYYY')}
+							{dayjs(selectedCampaign?.createdAt).format('MMM/D/YYYY')}
 						</Text>
 					</View>
 					<Text style={styles.section}>Monsters</Text>
 					<View style={styles.divider} />
-					{campaign.monsters.length === 0 ? (
+					{selectedCampaign?.monsters.length === 0 ? (
 						<Text style={styles.empty}>
 							No monsters in sight, I think we're safe...
 						</Text>
 					) : (
 						<FlatList
-							data={campaign.monsters}
+							data={selectedCampaign?.monsters}
 							renderItem={({ item }) => (
 								<MonsterListItem
 									item={item}

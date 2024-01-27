@@ -39,7 +39,7 @@ export const store = configureStore({
 		// user: userReducer,
 		user: persistReducer(userPersistConfig, userReducer),
 		monster: persistReducer(monsterPersistConfig, monsterReducer),
-		campaigns: persistReducer(campaignPersistConfig, campaignReducer),
+		campaign: persistReducer(campaignPersistConfig, campaignReducer),
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({

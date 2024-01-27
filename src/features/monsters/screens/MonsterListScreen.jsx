@@ -9,18 +9,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	setPage,
 	loadMonsters,
+	setSelectedMonster,
 	resetPage,
 	clearMonsters,
 } from '../../../redux/slices/monsterSlice';
 import Button from '../../../components/Button';
 import MonsterListItem from '../../../components/MonsterListItem';
+import Loading from '../../../components/Loading';
 import Filter from '../components/Filter';
 import Empty from '../components/Empty';
 import Footer from '../components/Footer';
 
 const MonsterListScreen = ({ navigation }) => {
 	const theme = useSelector((state) => state.theme);
-	const { monsters, page } = useSelector((state) => state.monster);
+	const { loading, monsters, page, selectedMonster } = useSelector(
+		(state) => state.monster
+	);
 	const dispatch = useDispatch();
 
 	const handleLoadMore = () => {
@@ -35,7 +39,8 @@ const MonsterListScreen = ({ navigation }) => {
 	};
 
 	const handlePress = (item) => {
-		navigation.navigate('MonsterDetail', { monster: item });
+		dispatch(setSelectedMonster(item));
+		navigation.navigate('MonsterDetail');
 	};
 
 	const styles = StyleSheet.create({
@@ -57,10 +62,24 @@ const MonsterListScreen = ({ navigation }) => {
 		buttonContainer: {
 			paddingHorizontal: 30,
 		},
+		button: {
+			backgroundColor: theme.brand,
+			marginVertical: theme.spacing,
+			borderRadius: 20,
+			elevation: 10,
+		},
+		button_label: {
+			color: theme.heading,
+			fontFamily: 'Creepster_400Regular',
+			fontSize: 20,
+			marginVertical: 5,
+			textAlign: 'center',
+		},
 	});
 
 	return (
 		<View style={styles.canvas}>
+			{loading && <Loading />}
 			<ImageBackground
 				source={require('../../../../assets/parchment.jpg')}
 				style={styles.background}
@@ -87,7 +106,12 @@ const MonsterListScreen = ({ navigation }) => {
 					)}
 					{page === 0 && (
 						<View style={styles.buttonContainer}>
-							<Button label='Get Monsters' onPress={handleLoadMore} />
+							<Button
+								btnStyle={styles.button}
+								labelStyle={styles.button_label}
+								label='Get Monsters'
+								onPress={handleLoadMore}
+							/>
 						</View>
 					)}
 				</View>

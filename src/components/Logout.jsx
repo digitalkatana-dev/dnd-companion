@@ -12,16 +12,24 @@ const Logout = () => {
 	};
 
 	const styles = StyleSheet.create({
-		logout: {
+		btn_style: {
+			marginVertical: theme.spacing,
+			borderRadius: 20,
+			elevation: 10,
+		},
+		btn_label: {
 			color: theme.paragraph,
+			fontFamily: 'Creepster_400Regular',
+			fontSize: 20,
+			textAlign: 'center',
 		},
 	});
 
 	return (
 		<Button
-			variant='text'
+			btnStyle={styles.btn_style}
 			label='Logout'
-			labelStyle={styles.logout}
+			labelStyle={styles.btn_label}
 			onPress={handlePress}
 		/>
 	);
