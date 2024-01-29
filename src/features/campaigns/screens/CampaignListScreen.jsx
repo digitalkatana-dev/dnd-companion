@@ -6,6 +6,7 @@ import {
 	TextInput,
 	View,
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	setName,
@@ -70,6 +71,7 @@ const CampaignListScreen = ({ navigation }) => {
 			flex: 1,
 			height: 40,
 			margin: 12,
+			backgroundColor: 'lightgrey',
 			borderWidth: 2,
 			borderColor: theme.brand,
 			borderRadius: 20,
@@ -121,12 +123,13 @@ const CampaignListScreen = ({ navigation }) => {
 							onFocus={handleFocus}
 							onChangeText={handleChange}
 						/>
-						<IconButton
-							icon='add-circle-outline'
-							size={30}
-							color={theme.brand}
-							onPress={handleSubmit}
-						/>
+						<IconButton onPress={handleSubmit}>
+							<MaterialIcons
+								name='add-circle-outline'
+								size={30}
+								color={theme.brand}
+							/>
+						</IconButton>
 					</View>
 					{errors?.name && (
 						<View style={styles.errorContainer}>

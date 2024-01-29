@@ -7,6 +7,7 @@ import {
 	Text,
 	View,
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Divider } from '@rneui/themed';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -195,12 +196,13 @@ const CampaignMonsterScreen = ({ navigation }) => {
 					<Text style={styles.campaignName}>{selectedCampaign?.name}</Text>
 					<View style={styles.buttonContainer}>
 						<Text style={styles.buttonLabel}>Remove from Campaign</Text>
-						<IconButton
-							icon='remove-circle-outline'
-							size={25}
-							color={theme.brand}
-							onPress={onRemoveFromCampaign}
-						/>
+						<IconButton onPress={onRemoveFromCampaign}>
+							<MaterialIcons
+								name='remove-circle-outline'
+								size={25}
+								color={theme.brand}
+							/>
+						</IconButton>
 					</View>
 				</View>
 				<ScrollView contentContainerStyle={styles.scroll}>

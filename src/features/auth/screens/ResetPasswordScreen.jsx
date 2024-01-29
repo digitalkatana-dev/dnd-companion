@@ -41,13 +41,12 @@ const ResetPasswordScreen = ({ navigation }) => {
 	};
 
 	const handleSuccess = useCallback(() => {
-		if (success) {
+		if (success && success == 'Password Upated Successfully!') {
 			setTimeout(() => {
 				navigation.navigate('Auth');
-				dispatch(clearSuccess());
-			}, 7000);
+			}, 5000);
 		}
-	}, [success, navigation, dispatch]);
+	}, [success, navigation]);
 
 	useEffect(() => {
 		handleSuccess();

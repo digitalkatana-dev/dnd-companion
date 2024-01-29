@@ -5,6 +5,7 @@ import {
 	Text,
 	View,
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -107,12 +108,13 @@ const CampaignDetailsScreen = ({ navigation }) => {
 			>
 				<View style={styles.buttonContainer}>
 					<Text style={styles.buttonLabel}>Delete Campaign</Text>
-					<IconButton
-						icon='remove-circle-outline'
-						size={25}
-						color={theme.brand}
-						onPress={handleDelete}
-					/>
+					<IconButton onPress={handleDelete}>
+						<MaterialIcons
+							name='remove-circle-outline'
+							size={25}
+							color={theme.brand}
+						/>
+					</IconButton>
 				</View>
 				<View style={styles.container}>
 					<View style={styles.header}>

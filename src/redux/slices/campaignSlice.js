@@ -3,17 +3,18 @@ import {
 	createEntityAdapter,
 	createSlice,
 } from '@reduxjs/toolkit';
-import { logout } from './userSlice';
+import { getUser, logout } from './userSlice';
 import companionApi from '../../api/companionApi';
 
 export const createCampaign = createAsyncThunk(
 	'campaign/create_campaign',
-	async (data, { rejectWithValue, dispatch }) => {
+	async (data, { rejectWithValue, dispatch, getState }) => {
 		try {
 			const res = await companionApi.post('/campaigns', data);
 			const { success } = res.data;
 			if (success) {
-				dispatch(getCampaigns(data.createdBy));
+				const user = getState().user.user;
+				dispatch(getUser(user._id));
 			}
 			return success;
 		} catch (err) {
@@ -47,7 +48,7 @@ export const addOrRemoveMonster = createAsyncThunk(
 			);
 			const { success } = res.data;
 			if (success) {
-				dispatch(getCampaigns(user));
+				dispatch(getUser(user));
 			}
 			return res.data;
 		} catch (err) {
@@ -64,7 +65,7 @@ export const deleteCampaign = createAsyncThunk(
 			const res = await companionApi.delete(`/campaigns/${id}`);
 			const { success } = res.data;
 			if (success) {
-				dispatch(getCampaigns(user));
+				dispatch(getUser(user));
 			}
 			return success;
 		} catch (err) {

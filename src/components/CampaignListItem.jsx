@@ -1,32 +1,24 @@
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { ListItem } from '@rneui/themed';
-import { useDispatch, useSelector } from 'react-redux';
-import { addOrRemoveMonster } from '../redux/slices/campaignSlice';
+import { Icon, ListItem } from '@rneui/themed';
+import { useSelector } from 'react-redux';
+import IconButton from '../components/IconButton';
 
-const CampaignListItem = ({ variant, item, monster, onClose, navigation }) => {
+const CampaignListItem = ({
+	disabled,
+	variant,
+	item,
+	itemStyle,
+	titleStyle,
+	onPress,
+	optionPress,
+}) => {
 	const theme = useSelector((state) => state.theme);
-	const { user } = useSelector((state) => state.user);
-	const dispatch = useDispatch();
-
-	const handlePress = () => {
-		if (variant === 'empty') {
-			navigation.navigate('Campaigns');
-		} else {
-			const data = {
-				campaignId: item._id,
-				monster,
-				user: user._id,
-			};
-			dispatch(addOrRemoveMonster(data));
-		}
-		onClose();
-	};
 
 	const styles = StyleSheet.create({});
 
 	if (variant === 'empty') {
 		return (
-			<TouchableOpacity onPress={handlePress}>
+			<TouchableOpacity onPress={onPress}>
 				<ListItem>
 					<ListItem.Content>
 						<ListItem.Title>No Campaigns...</ListItem.Title>
@@ -37,11 +29,20 @@ const CampaignListItem = ({ variant, item, monster, onClose, navigation }) => {
 	}
 
 	return (
-		<TouchableOpacity onPress={handlePress}>
-			<ListItem bottomDivider>
+		<TouchableOpacity disabled={disabled} onPress={onPress}>
+			<ListItem containerStyle={itemStyle} bottomDivider>
 				<ListItem.Content>
-					<ListItem.Title>{item.name}</ListItem.Title>
+					<ListItem.Title style={titleStyle}>{item.name}</ListItem.Title>
 				</ListItem.Content>
+				{variant === 'profile' && (
+					<IconButton onPress={optionPress}>
+						<Icon
+							name='ellipsis-vertical-circle'
+							type='ionicon'
+							color={theme.brand}
+						/>
+					</IconButton>
+				)}
 			</ListItem>
 		</TouchableOpacity>
 	);

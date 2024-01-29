@@ -11,7 +11,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	setEmail,
 	generatePasswordToken,
-	clearSuccess,
 	clearErrors,
 } from '../../../redux/slices/userSlice';
 import Button from '../../../components/Button';
@@ -38,13 +37,12 @@ const ForgotPasswordScreen = ({ navigation }) => {
 	};
 
 	const handleSuccess = useCallback(() => {
-		if (success) {
+		if (success && success == 'Token generated successfully!') {
 			setTimeout(() => {
 				navigation.navigate('ResetPassword');
-				dispatch(clearSuccess());
-			}, 7000);
+			}, 5000);
 		}
-	}, [success, navigation, dispatch]);
+	}, [success, navigation]);
 
 	useEffect(() => {
 		handleSuccess();

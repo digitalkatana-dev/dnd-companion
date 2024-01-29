@@ -7,11 +7,15 @@ import {
 	Text,
 	View,
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Divider } from '@rneui/themed';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedMonster } from '../../../redux/slices/monsterSlice';
-import { getCampaigns } from '../../../redux/slices/campaignSlice';
+import {
+	getCampaigns,
+	addOrRemoveMonster,
+} from '../../../redux/slices/campaignSlice';
 import { capitalizeWords } from '../../../util/helpers';
 import Loading from '../../../components/Loading';
 import IconButton from '../../../components/IconButton';
@@ -63,6 +67,20 @@ const MonsterDetailScreen = ({ navigation }) => {
 
 	const onModalClose = () => {
 		setIsModalVisible(false);
+	};
+
+	const handlePress = (item, variant) => {
+		if (variant === 'empty') {
+			navigation.navigate('Campaigns');
+		} else {
+			const data = {
+				campaignId: item._id,
+				monster: selectedMonster,
+				user: user._id,
+			};
+			dispatch(addOrRemoveMonster(data));
+		}
+		onModalClose();
 	};
 
 	const styles = StyleSheet.create({
@@ -176,7 +194,7 @@ const MonsterDetailScreen = ({ navigation }) => {
 
 	useEffect(() => {
 		return clearMonster();
-	}, [clearMonster()]);
+	}, [clearMonster]);
 
 	return (
 		<View style={styles.canvas}>
@@ -187,12 +205,13 @@ const MonsterDetailScreen = ({ navigation }) => {
 			>
 				<View style={styles.buttonContainer}>
 					<Text style={styles.buttonLabel}>Add to Campaign</Text>
-					<IconButton
-						icon='add-circle-outline'
-						size={25}
-						color={theme.brand}
-						onPress={onAddToCampaign}
-					/>
+					<IconButton onPress={onAddToCampaign}>
+						<MaterialIcons
+							name='add-circle-outline'
+							size={25}
+							color={theme.brand}
+						/>
+					</IconButton>
 				</View>
 				<ScrollView contentContainerStyle={styles.scroll}>
 					<View style={styles.statContainer}>
@@ -430,8 +449,7 @@ const MonsterDetailScreen = ({ navigation }) => {
 					{campaigns.length === 0 ? (
 						<CampaignListItem
 							variant='empty'
-							navigation={navigation}
-							onClose={onModalClose}
+							onPress={() => handlePress(item, 'empty')}
 						/>
 					) : (
 						<FlatList
@@ -439,9 +457,7 @@ const MonsterDetailScreen = ({ navigation }) => {
 							renderItem={({ item }) => (
 								<CampaignListItem
 									item={item}
-									monster={selectedMonster}
-									navigation={navigation}
-									onClose={onModalClose}
+									onPress={() => handlePress(item)}
 								/>
 							)}
 							keyExtractor={(item) => item._id}
