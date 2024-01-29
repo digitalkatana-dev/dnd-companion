@@ -6,8 +6,9 @@ import {
 	View,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { getUser } from '../../../redux/slices/userSlice';
 import {
 	deleteCampaign,
 	setSelectedCampaign,
@@ -16,11 +17,13 @@ import { setSelectedMonster } from '../../../redux/slices/monsterSlice';
 import dayjs from 'dayjs';
 import IconButton from '../../../components/IconButton';
 import MonsterListItem from '../../../components/MonsterListItem';
+import DeleteModal from '../../../components/DeleteModal';
 
 const CampaignDetailsScreen = ({ navigation }) => {
 	const theme = useSelector((state) => state.theme);
 	const { user } = useSelector((state) => state.user);
-	const { selectedCampaign } = useSelector((state) => state.campaign);
+	const { selectedCampaign, success } = useSelector((state) => state.campaign);
+	const [isDeleteVisible, setIsDeleteVisible] = useState(false);
 	const dispatch = useDispatch();
 
 	const handleDelete = () => {
@@ -30,13 +33,44 @@ const CampaignDetailsScreen = ({ navigation }) => {
 		};
 
 		dispatch(deleteCampaign(data));
-		navigation.navigate('CampaignList');
 	};
 
 	const handlePress = (item) => {
 		dispatch(setSelectedMonster(item));
 		navigation.navigate('CampaignMonster');
 	};
+
+	const handleDeletePress = () => {
+		setIsDeleteVisible(true);
+	};
+
+	const handleDeleteClose = () => {
+		setIsDeleteVisible(false);
+	};
+
+	const clearCampaign = useCallback(() => {
+		navigation.addListener('beforeRemove', () => {
+			setTimeout(() => {
+				dispatch(setSelectedCampaign(null));
+			}, 1500);
+		});
+	}, [navigation, dispatch]);
+
+	useEffect(() => {
+		return clearCampaign();
+	}, [clearCampaign]);
+
+	const reloadUser = useCallback(() => {
+		if (success && success === 'Campaign deleted successfully!') {
+			dispatch(getUser(user?._id));
+			navigation.navigate('CampaignList');
+			handleDeleteClose();
+		}
+	}, [dispatch, success, user]);
+
+	useEffect(() => {
+		reloadUser();
+	}, [reloadUser]);
 
 	const styles = StyleSheet.create({
 		canvas: {
@@ -88,18 +122,6 @@ const CampaignDetailsScreen = ({ navigation }) => {
 		},
 	});
 
-	const clearCampaign = useCallback(() => {
-		navigation.addListener('beforeRemove', () => {
-			setTimeout(() => {
-				dispatch(setSelectedCampaign(null));
-			}, 1500);
-		});
-	}, [navigation, dispatch]);
-
-	useEffect(() => {
-		return clearCampaign();
-	}, [clearCampaign]);
-
 	return (
 		<View style={styles.canvas}>
 			<ImageBackground
@@ -108,7 +130,7 @@ const CampaignDetailsScreen = ({ navigation }) => {
 			>
 				<View style={styles.buttonContainer}>
 					<Text style={styles.buttonLabel}>Delete Campaign</Text>
-					<IconButton onPress={handleDelete}>
+					<IconButton onPress={handleDeletePress}>
 						<MaterialIcons
 							name='remove-circle-outline'
 							size={25}
@@ -146,6 +168,12 @@ const CampaignDetailsScreen = ({ navigation }) => {
 						/>
 					)}
 				</View>
+				<DeleteModal
+					visible={isDeleteVisible}
+					type='campaign'
+					onPress={handleDelete}
+					onClose={handleDeleteClose}
+				/>
 			</ImageBackground>
 		</View>
 	);

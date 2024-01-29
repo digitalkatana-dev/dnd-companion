@@ -1,4 +1,11 @@
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+	ImageBackground,
+	Modal,
+	Pressable,
+	StyleSheet,
+	Text,
+	View,
+} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 
@@ -15,18 +22,19 @@ const ProfileActions = ({ isVisible, children, onClose }) => {
 			position: 'absolute',
 			bottom: 0,
 		},
+		modalBackground: {
+			height: '100%',
+		},
 		titleContainer: {
 			height: '16%',
 			backgroundColor: '#464C55',
-			borderTopRightRadius: 10,
-			borderTopLeftRadius: 10,
 			paddingHorizontal: 20,
 			flexDirection: 'row',
 			alignItems: 'center',
 			justifyContent: 'space-between',
 		},
 		title: {
-			color: '#fff',
+			color: theme.neutral,
 			fontSize: 16,
 		},
 	});
@@ -34,13 +42,18 @@ const ProfileActions = ({ isVisible, children, onClose }) => {
 	return (
 		<Modal animationType='slide' transparent={true} visible={isVisible}>
 			<View style={styles.modalContent}>
-				<View style={styles.titleContainer}>
-					<Text style={styles.title}>Options</Text>
-					<Pressable onPress={onClose}>
-						<MaterialIcons name='close' color='#fff' size={22} />
-					</Pressable>
-				</View>
-				{children}
+				<ImageBackground
+					source={require('../../../../assets/parchment-dark.png')}
+					style={styles.modalBackground}
+				>
+					<View style={styles.titleContainer}>
+						<Text style={styles.title}>Options</Text>
+						<Pressable onPress={onClose}>
+							<MaterialIcons name='close' color='#fff' size={22} />
+						</Pressable>
+					</View>
+					{children}
+				</ImageBackground>
 			</View>
 		</Modal>
 	);

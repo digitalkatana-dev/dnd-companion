@@ -18,7 +18,7 @@ const Logout = () => {
 			elevation: 10,
 		},
 		btn_label: {
-			color: theme.paragraph,
+			color: theme.heading,
 			fontFamily: 'Creepster_400Regular',
 			fontSize: 20,
 			textAlign: 'center',

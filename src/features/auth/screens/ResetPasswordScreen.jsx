@@ -65,7 +65,7 @@ const ResetPasswordScreen = ({ navigation }) => {
 		quote: {
 			fontFamily: 'Creepster_400Regular',
 			fontSize: 50,
-			color: theme.heading,
+			color: theme.neutral,
 			textAlign: 'center',
 		},
 		icon_container: {
@@ -102,7 +102,7 @@ const ResetPasswordScreen = ({ navigation }) => {
 			borderColor: 'steelblue',
 		},
 		auth_btn_label: {
-			color: theme.heading,
+			color: theme.neutral,
 			fontFamily: 'Creepster_400Regular',
 			fontSize: 15,
 			marginVertical: 5,

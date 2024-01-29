@@ -182,6 +182,13 @@ const MonsterDetailScreen = ({ navigation }) => {
 			borderBottomColor: 'brown',
 			borderBottomWidth: 1,
 		},
+		itemStyle: {
+			backgroundColor: 'transparent',
+		},
+		itemTitle: {
+			fontFamily: 'AlegreyaSC_800ExtraBold',
+			color: theme.neutral,
+		},
 	});
 
 	const clearMonster = useCallback(() => {
@@ -456,6 +463,8 @@ const MonsterDetailScreen = ({ navigation }) => {
 							data={campaigns}
 							renderItem={({ item }) => (
 								<CampaignListItem
+									itemStyle={styles.itemStyle}
+									titleStyle={styles.itemTitle}
 									item={item}
 									onPress={() => handlePress(item)}
 								/>

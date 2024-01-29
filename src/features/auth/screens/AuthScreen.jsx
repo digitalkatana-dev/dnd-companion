@@ -123,7 +123,7 @@ const AuthScreen = ({ navigation }) => {
 		quote: {
 			fontFamily: 'Creepster_400Regular',
 			fontSize: 50,
-			color: theme.heading,
+			color: theme.neutral,
 			textAlign: 'center',
 		},
 		scroll: {
@@ -155,10 +155,11 @@ const AuthScreen = ({ navigation }) => {
 			marginVertical: 5,
 		},
 		toggleTxt: {
-			color: theme.heading,
+			color: theme.neutral,
 		},
 		toggle_btn_label: {
 			color: theme.error,
+			fontWeight: 'bold',
 		},
 		auth_btn_style: {
 			marginVertical: theme.spacing,
@@ -169,7 +170,7 @@ const AuthScreen = ({ navigation }) => {
 			borderColor: 'steelblue',
 		},
 		auth_btn_label: {
-			color: theme.heading,
+			color: theme.neutral,
 			fontFamily: 'Creepster_400Regular',
 			fontSize: 15,
 			marginVertical: 5,

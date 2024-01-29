@@ -69,7 +69,7 @@ const MonsterListScreen = ({ navigation }) => {
 			elevation: 10,
 		},
 		button_label: {
-			color: theme.heading,
+			color: theme.neutral,
 			fontFamily: 'Creepster_400Regular',
 			fontSize: 20,
 			marginVertical: 5,

@@ -13,7 +13,7 @@ const DeleteModal = ({ visible, type, onPress, onClose }) => {
 		},
 		modalView: {
 			margin: 20,
-			backgroundColor: 'white',
+			backgroundColor: theme.primary,
 			borderRadius: 20,
 			padding: 35,
 			alignItems: 'center',
@@ -30,6 +30,12 @@ const DeleteModal = ({ visible, type, onPress, onClose }) => {
 			fontSize: 20,
 			fontWeight: 'bold',
 			marginBottom: 10,
+			color: theme.heading,
+		},
+		paragraph: {
+			color: theme.paragraph,
+			textAlign: 'center',
+			marginVertical: 10,
 		},
 		important: {
 			fontWeight: 'bold',
@@ -38,21 +44,23 @@ const DeleteModal = ({ visible, type, onPress, onClose }) => {
 		action_container: {
 			alignSelf: 'flex-end',
 			flexDirection: 'row',
-			gap: 5,
+			gap: 10,
 			marginTop: 10,
 		},
 		delete_button: {
-			backgroundColor: theme.brand,
+			backgroundColor: theme.highlight,
 			padding: 7,
 			borderRadius: 10,
+			elevation: 10,
 		},
 		cancel_button: {
 			backgroundColor: theme.error,
 			padding: 7,
 			borderRadius: 10,
+			elevation: 10,
 		},
 		button_label: {
-			color: theme.heading,
+			color: theme.neutral,
 		},
 	});
 
@@ -66,7 +74,7 @@ const DeleteModal = ({ visible, type, onPress, onClose }) => {
 			<View style={styles.canvas}>
 				<View style={styles.modalView}>
 					<Text style={styles.header}>Are you sure?</Text>
-					<Text>
+					<Text style={styles.paragraph}>
 						Are you sure you want to delete this {type} forever? This{' '}
 						<Text style={styles.important}>CANNOT</Text> be undone.
 					</Text>
@@ -80,7 +88,7 @@ const DeleteModal = ({ visible, type, onPress, onClose }) => {
 						<Button
 							btnStyle={styles.delete_button}
 							labelStyle={styles.button_label}
-							label='Delete'
+							label='Continue'
 							onPress={onPress}
 						/>
 					</View>

@@ -139,6 +139,13 @@ const ProfileScreen = ({ navigation }) => {
 			fontFamily: 'AlegreyaSC_500Medium',
 			color: theme.brand,
 		},
+		option_item: {
+			backgroundColor: 'transparent',
+		},
+		option_title: {
+			fontFamily: 'AlegreyaSC_800ExtraBold',
+			color: theme.neutral,
+		},
 	});
 
 	return (
@@ -156,7 +163,7 @@ const ProfileScreen = ({ navigation }) => {
 								source={{
 									uri: user?.profilePic?.replace(
 										'localhost:3005',
-										'52bb-98-176-78-196.ngrok-free.app'
+										'2a32-98-176-78-196.ngrok-free.app'
 									),
 								}}
 								alt={user?.handle}
@@ -193,16 +200,20 @@ const ProfileScreen = ({ navigation }) => {
 				</View>
 				<ProfileActions isVisible={isModalVisible} onClose={onModalClose}>
 					<TouchableOpacity onPress={handleEdit}>
-						<ListItem bottomDivider>
+						<ListItem containerStyle={styles.option_item} bottomDivider>
 							<ListItem.Content>
-								<ListItem.Title>Edit</ListItem.Title>
+								<ListItem.Title style={styles.option_title}>
+									Edit
+								</ListItem.Title>
 							</ListItem.Content>
 						</ListItem>
 					</TouchableOpacity>
 					<TouchableOpacity onPress={handleDeletePress}>
-						<ListItem bottomDivider>
+						<ListItem containerStyle={styles.option_item} bottomDivider>
 							<ListItem.Content>
-								<ListItem.Title>Delete</ListItem.Title>
+								<ListItem.Title style={styles.option_title}>
+									Delete
+								</ListItem.Title>
 							</ListItem.Content>
 						</ListItem>
 					</TouchableOpacity>
