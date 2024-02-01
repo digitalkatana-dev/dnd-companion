@@ -3,9 +3,9 @@ import {
 	ScrollView,
 	StyleSheet,
 	Text,
-	TextInput,
 	View,
 } from 'react-native';
+import { Input as TextInput, Icon } from '@rneui/themed';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -35,6 +35,7 @@ const AuthScreen = ({ navigation }) => {
 		errors,
 	} = useSelector((state) => state.user);
 	const [authType, setAuthType] = useState('login');
+	const [show, setShow] = useState(false);
 	const dispatch = useDispatch();
 	let maxHeight;
 
@@ -92,7 +93,7 @@ const AuthScreen = ({ navigation }) => {
 
 	if (authType === 'login') {
 		if (errors?.login || errors?.password) {
-			maxHeight = 190;
+			maxHeight = 195;
 		} else {
 			maxHeight = 130;
 		}
@@ -104,7 +105,7 @@ const AuthScreen = ({ navigation }) => {
 			errors?.email ||
 			errors?.password
 		) {
-			maxHeight = 445;
+			maxHeight = 480;
 		} else {
 			maxHeight = 320;
 		}
@@ -138,7 +139,6 @@ const AuthScreen = ({ navigation }) => {
 			backgroundColor: 'lightgrey',
 			borderRadius: 20,
 			padding: 10,
-			textAlign: 'center',
 		},
 		buttonContainer: {
 			marginVertical: 20,
@@ -188,6 +188,14 @@ const AuthScreen = ({ navigation }) => {
 			color: theme.highlight,
 			fontWeight: 'bold',
 		},
+		input_error: {
+			color: theme.error,
+			alignSelf: 'center',
+			fontWeight: 'bold',
+			backgroundColor: 'rgba(0,0,0,.7)',
+			borderRadius: 20,
+			padding: 3,
+		},
 		errorContainer: {
 			alignItems: 'center',
 		},
@@ -230,59 +238,55 @@ const AuthScreen = ({ navigation }) => {
 							<View style={styles.formControl}>
 								<TextInput
 									placeholder='First Name'
-									style={styles.input}
+									inputContainerStyle={styles.input}
+									inputStyle={{ textAlign: 'center' }}
 									value={firstName}
 									onChangeText={(text) => handleChange('first', text)}
 									onFocus={handleFocus}
+									errorMessage={errors?.firstName}
+									renderErrorMessage={false}
+									errorStyle={styles.input_error}
 								/>
-								{errors?.firstName && (
-									<View style={styles.errorContainer}>
-										<Text style={styles.error}>{errors?.firstName}</Text>
-									</View>
-								)}
 							</View>
 							<View style={styles.formControl}>
 								<TextInput
 									placeholder='Last Name'
-									style={styles.input}
+									inputContainerStyle={styles.input}
+									inputStyle={{ textAlign: 'center' }}
 									value={lastName}
 									onChangeText={(text) => handleChange('last', text)}
 									onFocus={handleFocus}
+									errorMessage={errors?.lastName}
+									renderErrorMessage={false}
+									errorStyle={styles.input_error}
 								/>
-								{errors?.lastName && (
-									<View style={styles.errorContainer}>
-										<Text style={styles.error}>{errors?.lastName}</Text>
-									</View>
-								)}
 							</View>
 							<View style={styles.formControl}>
 								<TextInput
 									placeholder='Handle'
-									style={styles.input}
+									inputContainerStyle={styles.input}
+									inputStyle={{ textAlign: 'center' }}
 									value={handle}
 									onChangeText={(text) => handleChange('handle', text)}
 									onFocus={handleFocus}
+									errorMessage={errors?.handle}
+									renderErrorMessage={false}
+									errorStyle={styles.input_error}
 								/>
-								{errors?.handle && (
-									<View style={styles.errorContainer}>
-										<Text style={styles.error}>{errors?.handle}</Text>
-									</View>
-								)}
 							</View>
 							<View style={styles.formControl}>
 								<TextInput
 									keyboardType='email-address'
 									placeholder='Email'
-									style={styles.input}
+									inputContainerStyle={styles.input}
+									inputStyle={{ textAlign: 'center' }}
 									value={email}
 									onChangeText={(text) => handleChange('email', text)}
 									onFocus={handleFocus}
+									errorMessage={errors?.email}
+									renderErrorMessage={false}
+									errorStyle={styles.input_error}
 								/>
-								{errors?.email && (
-									<View style={styles.errorContainer}>
-										<Text style={styles.error}>{errors?.email}</Text>
-									</View>
-								)}
 							</View>
 						</>
 					)}
@@ -290,32 +294,38 @@ const AuthScreen = ({ navigation }) => {
 						<View style={styles.formControl}>
 							<TextInput
 								placeholder='Login'
-								style={styles.input}
+								inputContainerStyle={styles.input}
+								inputStyle={{ textAlign: 'center' }}
 								value={login}
 								onChangeText={(text) => handleChange('login', text)}
 								onFocus={handleFocus}
+								errorMessage={errors?.login}
+								renderErrorMessage={false}
+								errorStyle={styles.input_error}
 							/>
-							{errors?.login && (
-								<View style={styles.errorContainer}>
-									<Text style={styles.error}>{errors?.login}</Text>
-								</View>
-							)}
 						</View>
 					)}
 					<View style={styles.formControl}>
 						<TextInput
-							secureTextEntry={true}
+							secureTextEntry={show ? false : true}
 							placeholder='Password'
-							style={styles.input}
+							inputContainerStyle={styles.input}
+							inputStyle={{ textAlign: 'center' }}
 							value={password}
 							onChangeText={(text) => handleChange('pass', text)}
 							onFocus={handleFocus}
+							rightIcon={
+								<Icon
+									name={show ? 'visibility-off' : 'visibility'}
+									type='material'
+									size={20}
+									onPress={() => setShow(!show)}
+								/>
+							}
+							errorMessage={errors?.password}
+							renderErrorMessage={false}
+							errorStyle={styles.input_error}
 						/>
-						{errors?.password && (
-							<View style={styles.errorContainer}>
-								<Text style={styles.error}>{errors?.password}</Text>
-							</View>
-						)}
 					</View>
 				</ScrollView>
 				<Text style={styles.quote}>And...</Text>

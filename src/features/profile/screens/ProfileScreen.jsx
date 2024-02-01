@@ -10,38 +10,58 @@ import {
 import { Divider, ListItem } from '@rneui/themed';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUser } from '../../../redux/slices/userSlice';
+import { getUser, updateUser } from '../../../redux/slices/userSlice';
 import {
 	setSelectedCampaign,
 	deleteCampaign,
 } from '../../../redux/slices/campaignSlice';
 import Loading from '../../../components/Loading';
 import CampaignListItem from '../../../components/CampaignListItem';
+import AvatarPicker from '../components/AvatarPicker';
+import AvatarList from '../components/AvatarList';
 import ProfileActions from '../components/ProfileActions';
 import DeleteModal from '../../../components/DeleteModal';
 
 const ProfileScreen = ({ navigation }) => {
 	const theme = useSelector((state) => state.theme);
 	const { loading, user } = useSelector((state) => state.user);
+	const userSuccess = useSelector((state) => state.user.success);
 	const { selectedCampaign, campaigns, success } = useSelector(
 		(state) => state.campaign
 	);
-	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [isPickerVisible, setIsPickerVisible] = useState(false);
+	const [isActionsVisible, setIsActionsVisible] = useState(false);
 	const [isDeleteVisible, setIsDeleteVisible] = useState(false);
 	const dispatch = useDispatch();
 
-	const onModalClose = () => {
-		setIsModalVisible(false);
+	const onPickerClose = () => {
+		setIsPickerVisible(false);
 	};
 
-	const handleOptionsPress = (item) => {
-		setIsModalVisible(true);
+	const onActionsClose = () => {
+		setIsActionsVisible(false);
+	};
+
+	const handleAvatarPress = () => {
+		setIsPickerVisible(true);
+	};
+
+	const updateAvatar = (item) => {
+		const data = {
+			_id: user._id,
+			profilePic: item.source,
+		};
+		dispatch(updateUser(data));
+	};
+
+	const handleActionsPress = (item) => {
+		setIsActionsVisible(true);
 		dispatch(setSelectedCampaign(item));
 	};
 
 	const handleEdit = () => {
 		navigation.navigate('Campaigns', { screen: 'CampaignDetails' });
-		onModalClose();
+		onActionsClose();
 	};
 
 	const handleDeleteClose = () => {
@@ -49,7 +69,7 @@ const ProfileScreen = ({ navigation }) => {
 	};
 
 	const handleDeletePress = () => {
-		onModalClose();
+		onActionsClose();
 		setTimeout(() => {
 			setIsDeleteVisible(true);
 		}, 500);
@@ -62,6 +82,16 @@ const ProfileScreen = ({ navigation }) => {
 		};
 		dispatch(deleteCampaign(data));
 	};
+
+	const handleUserSuccess = useCallback(() => {
+		if (userSuccess && userSuccess == 'User updated successfully!') {
+			onPickerClose();
+		}
+	}, [userSuccess]);
+
+	useEffect(() => {
+		handleUserSuccess();
+	}, [handleUserSuccess]);
 
 	const reloadUser = useCallback(() => {
 		if (success && success === 'Campaign deleted successfully!') {
@@ -158,12 +188,15 @@ const ProfileScreen = ({ navigation }) => {
 				<View style={styles.header_container}>
 					<View style={styles.cover_section}>
 						<TouchableOpacity style={styles.cover_container} disabled />
-						<TouchableOpacity style={styles.user_image_container}>
+						<TouchableOpacity
+							style={styles.user_image_container}
+							onPress={handleAvatarPress}
+						>
 							<Image
 								source={{
 									uri: user?.profilePic?.replace(
 										'localhost:3005',
-										'2a32-98-176-78-196.ngrok-free.app'
+										'33ca-98-176-78-196.ngrok-free.app'
 									),
 								}}
 								alt={user?.handle}
@@ -190,7 +223,7 @@ const ProfileScreen = ({ navigation }) => {
 									variant='profile'
 									itemStyle={styles.listItem}
 									titleStyle={styles.itemTitle}
-									optionPress={() => handleOptionsPress(item)}
+									optionPress={() => handleActionsPress(item)}
 									item={item}
 								/>
 							)}
@@ -198,7 +231,10 @@ const ProfileScreen = ({ navigation }) => {
 						/>
 					</View>
 				</View>
-				<ProfileActions isVisible={isModalVisible} onClose={onModalClose}>
+				<AvatarPicker isVisible={isPickerVisible} onClose={onPickerClose}>
+					<AvatarList onPress={updateAvatar} />
+				</AvatarPicker>
+				<ProfileActions isVisible={isActionsVisible} onClose={onActionsClose}>
 					<TouchableOpacity onPress={handleEdit}>
 						<ListItem containerStyle={styles.option_item} bottomDivider>
 							<ListItem.Content>

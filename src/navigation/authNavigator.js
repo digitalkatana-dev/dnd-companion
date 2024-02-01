@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearSuccess } from '../redux/slices/userSlice';
+import { clearUserSuccess } from '../redux/slices/userSlice';
 import AuthScreen from '../features/auth/screens/AuthScreen';
 import ForgotPasswordScreen from '../features/auth/screens/ForgotPasswordScreen';
 import ResetPasswordScreen from '../features/auth/screens/ResetPasswordScreen';
@@ -24,7 +24,7 @@ export const AuthNavigator = () => {
 			setIsVisible(true);
 
 			setTimeout(() => {
-				dispatch(clearSuccess());
+				dispatch(clearUserSuccess());
 				setIsVisible(false);
 			}, 4000);
 		}

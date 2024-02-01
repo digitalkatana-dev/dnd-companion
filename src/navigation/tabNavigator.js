@@ -4,7 +4,8 @@ import { Snackbar } from 'react-native-paper';
 import { FontAwesome5, Fontisto } from '@expo/vector-icons';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearSuccess } from '../redux/slices/campaignSlice';
+import { clearUserSuccess } from '../redux/slices/userSlice';
+import { clearCampaignSuccess } from '../redux/slices/campaignSlice';
 import { MonsterNavigator } from './monsterNavigator';
 import { CampaignNavigator } from './campaignNavigator';
 import { ProfileNavigator } from './profileNavigator';
@@ -13,7 +14,8 @@ const AppTabs = createBottomTabNavigator();
 export const TabNavigator = () => {
 	const theme = useSelector((state) => state.theme);
 	const { user } = useSelector((state) => state.user);
-	const { success } = useSelector((state) => state.campaign);
+	const userSuccess = useSelector((state) => state.user.success);
+	const campaignSuccess = useSelector((state) => state.campaign.success);
 	const [isVisible, setIsVisible] = useState(false);
 	const dispatch = useDispatch();
 
@@ -66,20 +68,35 @@ export const TabNavigator = () => {
 		setIsVisible(false);
 	};
 
-	const handleSuccess = useCallback(() => {
-		if (success) {
+	const handleUserSuccess = useCallback(() => {
+		if (userSuccess) {
 			setIsVisible(true);
 
 			setTimeout(() => {
-				dispatch(clearSuccess());
+				dispatch(clearUserSuccess());
 				setIsVisible(false);
 			}, 4000);
 		}
-	}, [success, dispatch]);
+	}, [userSuccess, dispatch]);
+
+	const handleCampaignSuccess = useCallback(() => {
+		if (campaignSuccess) {
+			setIsVisible(true);
+
+			setTimeout(() => {
+				dispatch(clearCampaignSuccess());
+				setIsVisible(false);
+			}, 4000);
+		}
+	}, [campaignSuccess, dispatch]);
 
 	useEffect(() => {
-		handleSuccess();
-	}, [handleSuccess]);
+		handleUserSuccess();
+	}, [handleUserSuccess]);
+
+	useEffect(() => {
+		handleCampaignSuccess();
+	}, [handleCampaignSuccess]);
 
 	const styles = StyleSheet.create({
 		alert: {
@@ -100,7 +117,7 @@ export const TabNavigator = () => {
 				onDismiss={dismissSnackBar}
 				style={styles.alert}
 			>
-				{success && success}
+				{userSuccess ? userSuccess : campaignSuccess && campaignSuccess}
 			</Snackbar>
 		</>
 	);

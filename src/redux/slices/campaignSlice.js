@@ -97,7 +97,7 @@ export const campaignSlice = createSlice({
 		setSelectedCampaign: (state, action) => {
 			state.selectedCampaign = action.payload;
 		},
-		clearSuccess: (state) => {
+		clearCampaignSuccess: (state) => {
 			state.success = null;
 		},
 		clearErrors: (state) => {
@@ -171,7 +171,7 @@ export const {
 	setName,
 	setCampaigns,
 	setSelectedCampaign,
-	clearSuccess,
+	clearCampaignSuccess,
 	clearErrors,
 } = campaignSlice.actions;
 

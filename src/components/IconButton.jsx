@@ -1,5 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import React from 'react';
 
 const IconButton = ({ children, label, onPress }) => {

@@ -1,17 +1,11 @@
-import {
-	ImageBackground,
-	StyleSheet,
-	Text,
-	TextInput,
-	View,
-} from 'react-native';
+import { ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { Input as TextInput, Icon } from '@rneui/themed';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	setPassword,
 	resetWithToken,
-	clearSuccess,
 	clearErrors,
 } from '../../../redux/slices/userSlice';
 import Button from '../../../components/Button';
@@ -21,6 +15,7 @@ const ResetPasswordScreen = ({ navigation }) => {
 	const { password, resetToken, success, errors } = useSelector(
 		(state) => state.user
 	);
+	const [show, setShow] = useState(false);
 	const dispatch = useDispatch();
 
 	const handleFocus = () => {
@@ -108,6 +103,14 @@ const ResetPasswordScreen = ({ navigation }) => {
 			marginVertical: 5,
 			textAlign: 'center',
 		},
+		input_error: {
+			color: theme.error,
+			alignSelf: 'center',
+			fontWeight: 'bold',
+			backgroundColor: 'rgba(0,0,0,.7)',
+			borderRadius: 20,
+			padding: 3,
+		},
 		errorContainer: {
 			alignItems: 'center',
 		},
@@ -134,18 +137,25 @@ const ResetPasswordScreen = ({ navigation }) => {
 				<>
 					<View style={styles.formControl}>
 						<TextInput
-							secureTextEntry={true}
+							secureTextEntry={show ? false : true}
 							placeholder='Password'
-							style={styles.input}
+							inputContainerStyle={styles.input}
+							inputStyle={{ textAlign: 'center' }}
 							value={password}
 							onChangeText={handleChange}
 							onFocus={handleFocus}
+							rightIcon={
+								<Icon
+									name={show ? 'visibility-off' : 'visibility'}
+									type='material'
+									size={20}
+									onPress={() => setShow(!show)}
+								/>
+							}
+							errorMessage={errors?.password}
+							renderErrorMessage={false}
+							errorStyle={styles.input_error}
 						/>
-						{errors?.password && (
-							<View style={styles.errorContainer}>
-								<Text style={styles.error}>{errors?.password}</Text>
-							</View>
-						)}
 					</View>
 				</>
 				<View style={styles.buttonContainer}>

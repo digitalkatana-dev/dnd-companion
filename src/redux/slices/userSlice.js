@@ -92,7 +92,18 @@ export const resetWithToken = createAsyncThunk(
 	}
 );
 
-export const updateUser = createAsyncThunk();
+export const updateUser = createAsyncThunk(
+	'user/update_user',
+	async (data, { rejectWithValue }) => {
+		const { _id, ...others } = data;
+		try {
+			const res = await companionApi.put(`/users/${_id}`, others);
+			return res.data;
+		} catch (err) {
+			return rejectWithValue(err.response.data);
+		}
+	}
+);
 
 export const deleteUser = createAsyncThunk();
 
@@ -144,7 +155,7 @@ export const userSlice = createSlice({
 			state.login = '';
 			state.password = '';
 		},
-		clearSuccess: (state) => {
+		clearUserSuccess: (state) => {
 			state.success = null;
 		},
 		clearErrors: (state) => {
@@ -231,6 +242,19 @@ export const userSlice = createSlice({
 				state.loading = false;
 				state.errors = action.payload;
 			})
+			.addCase(updateUser.pending, (state) => {
+				state.loading = true;
+				state.errors = null;
+			})
+			.addCase(updateUser.fulfilled, (state, action) => {
+				state.loading = false;
+				state.success = action.payload.success;
+				state.user = action.payload.updatedUser;
+			})
+			.addCase(updateUser.rejected, (state, action) => {
+				state.loading = false;
+				state.errors = action.payload;
+			})
 			.addCase(logout, (state) => {
 				userAdapter.removeAll(state);
 			});
@@ -244,8 +268,9 @@ export const {
 	setEmail,
 	setLogin,
 	setPassword,
+	setSelectedImage,
 	clearForm,
-	clearSuccess,
+	clearUserSuccess,
 	clearErrors,
 	logout,
 } = userSlice.actions;
