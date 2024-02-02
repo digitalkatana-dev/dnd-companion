@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const instance = axios.create({
-	baseURL: 'http://6fbf-98-176-78-196.ngrok-free.app',
+	baseURL: 'https://dnd-companion-backend.onrender.com',
 });
 
 instance.interceptors.request.use(

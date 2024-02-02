@@ -193,12 +193,7 @@ const ProfileScreen = ({ navigation }) => {
 							onPress={handleAvatarPress}
 						>
 							<Image
-								source={{
-									uri: user?.profilePic?.replace(
-										'localhost:3005',
-										'6fbf-98-176-78-196.ngrok-free.app'
-									),
-								}}
+								source={{ uri: user?.profilePic }}
 								alt={user?.handle}
 								style={styles.user_image}
 							/>
