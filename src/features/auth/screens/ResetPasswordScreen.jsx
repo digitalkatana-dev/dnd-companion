@@ -76,12 +76,14 @@ const ResetPasswordScreen = ({ navigation }) => {
 		formControl: {
 			flexDirection: 'column',
 		},
-		input: {
+		inputContainer: {
 			height: 40,
 			margin: 12,
 			backgroundColor: 'lightgrey',
 			borderRadius: 20,
 			padding: 10,
+		},
+		input: {
 			textAlign: 'center',
 		},
 		buttonContainer: {
@@ -139,8 +141,9 @@ const ResetPasswordScreen = ({ navigation }) => {
 						<TextInput
 							secureTextEntry={show ? false : true}
 							placeholder='Password'
-							inputContainerStyle={styles.input}
-							inputStyle={{ textAlign: 'center' }}
+							autoCapitalize='none'
+							inputContainerStyle={styles.inputContainer}
+							inputStyle={styles.input}
 							value={password}
 							onChangeText={handleChange}
 							onFocus={handleFocus}

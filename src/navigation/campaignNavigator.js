@@ -6,7 +6,9 @@ import CampaignMonsterScreen from '../features/campaigns/screens/CampaignMonster
 const CampaignStack = createNativeStackNavigator();
 export const CampaignNavigator = () => {
 	return (
-		<CampaignStack.Navigator screenOptions={{ headerShown: false }}>
+		<CampaignStack.Navigator
+			screenOptions={{ headerShown: false, gestureEnabled: false }}
+		>
 			<CampaignStack.Screen
 				name='CampaignList'
 				component={CampaignListScreen}

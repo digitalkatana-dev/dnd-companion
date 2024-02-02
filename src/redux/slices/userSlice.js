@@ -33,7 +33,6 @@ export const userLogin = createAsyncThunk(
 			dispatch(setCampaigns(userData.campaigns));
 			return userData;
 		} catch (err) {
-			console.log(err);
 			return rejectWithValue(err.response.data);
 		}
 	}

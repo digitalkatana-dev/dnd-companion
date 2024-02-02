@@ -133,12 +133,15 @@ const AuthScreen = ({ navigation }) => {
 		formControl: {
 			flexDirection: 'column',
 		},
-		input: {
+		inputContainer: {
 			height: 40,
 			margin: 12,
 			backgroundColor: 'lightgrey',
 			borderRadius: 20,
 			padding: 10,
+		},
+		input: {
+			textAlign: 'center',
 		},
 		buttonContainer: {
 			marginVertical: 20,
@@ -194,7 +197,8 @@ const AuthScreen = ({ navigation }) => {
 			fontWeight: 'bold',
 			backgroundColor: 'rgba(0,0,0,.7)',
 			borderRadius: 20,
-			padding: 3,
+			paddingVertical: 3,
+			paddingHorizontal: 5,
 		},
 		errorContainer: {
 			alignItems: 'center',
@@ -238,8 +242,8 @@ const AuthScreen = ({ navigation }) => {
 							<View style={styles.formControl}>
 								<TextInput
 									placeholder='First Name'
-									inputContainerStyle={styles.input}
-									inputStyle={{ textAlign: 'center' }}
+									inputContainerStyle={styles.inputContainer}
+									inputStyle={styles.input}
 									value={firstName}
 									onChangeText={(text) => handleChange('first', text)}
 									onFocus={handleFocus}
@@ -251,8 +255,8 @@ const AuthScreen = ({ navigation }) => {
 							<View style={styles.formControl}>
 								<TextInput
 									placeholder='Last Name'
-									inputContainerStyle={styles.input}
-									inputStyle={{ textAlign: 'center' }}
+									inputContainerStyle={styles.inputContainer}
+									inputStyle={styles.input}
 									value={lastName}
 									onChangeText={(text) => handleChange('last', text)}
 									onFocus={handleFocus}
@@ -264,8 +268,9 @@ const AuthScreen = ({ navigation }) => {
 							<View style={styles.formControl}>
 								<TextInput
 									placeholder='Handle'
-									inputContainerStyle={styles.input}
-									inputStyle={{ textAlign: 'center' }}
+									autoCapitalize='none'
+									inputContainerStyle={styles.inputContainer}
+									inputStyle={styles.input}
 									value={handle}
 									onChangeText={(text) => handleChange('handle', text)}
 									onFocus={handleFocus}
@@ -278,8 +283,9 @@ const AuthScreen = ({ navigation }) => {
 								<TextInput
 									keyboardType='email-address'
 									placeholder='Email'
-									inputContainerStyle={styles.input}
-									inputStyle={{ textAlign: 'center' }}
+									autoCapitalize='none'
+									inputContainerStyle={styles.inputContainer}
+									inputStyle={styles.input}
 									value={email}
 									onChangeText={(text) => handleChange('email', text)}
 									onFocus={handleFocus}
@@ -294,8 +300,9 @@ const AuthScreen = ({ navigation }) => {
 						<View style={styles.formControl}>
 							<TextInput
 								placeholder='Login'
-								inputContainerStyle={styles.input}
-								inputStyle={{ textAlign: 'center' }}
+								autoCapitalize='none'
+								inputContainerStyle={styles.inputContainer}
+								inputStyle={styles.input}
 								value={login}
 								onChangeText={(text) => handleChange('login', text)}
 								onFocus={handleFocus}
@@ -309,8 +316,9 @@ const AuthScreen = ({ navigation }) => {
 						<TextInput
 							secureTextEntry={show ? false : true}
 							placeholder='Password'
-							inputContainerStyle={styles.input}
-							inputStyle={{ textAlign: 'center' }}
+							autoCapitalize='none'
+							inputContainerStyle={styles.inputContainer}
+							inputStyle={styles.input}
 							value={password}
 							onChangeText={(text) => handleChange('pass', text)}
 							onFocus={handleFocus}

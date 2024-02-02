@@ -3,9 +3,9 @@ import {
 	ImageBackground,
 	StyleSheet,
 	Text,
-	TextInput,
 	View,
 } from 'react-native';
+import { Input as TextInput } from '@rneui/themed';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -67,15 +67,16 @@ const CampaignListScreen = ({ navigation }) => {
 			margin: 20,
 			marginBottom: 0,
 		},
-		input: {
-			flex: 1,
-			height: 40,
+		inputContainer: {
+			height: 35,
 			margin: 12,
 			backgroundColor: 'lightgrey',
 			borderWidth: 2,
 			borderColor: theme.brand,
 			borderRadius: 20,
 			padding: 10,
+		},
+		input: {
 			textAlign: 'center',
 		},
 		listContainer: {
@@ -98,6 +99,14 @@ const CampaignListScreen = ({ navigation }) => {
 			fontSize: 20,
 			textAlign: 'center',
 		},
+		input_error: {
+			color: theme.error,
+			alignSelf: 'center',
+			fontWeight: 'bold',
+			borderRadius: 20,
+			paddingVertical: 3,
+			paddingHorizontal: 5,
+		},
 		errorContainer: {
 			alignItems: 'center',
 		},
@@ -118,24 +127,25 @@ const CampaignListScreen = ({ navigation }) => {
 					<View style={styles.formContainer}>
 						<TextInput
 							placeholder='New Campaign'
-							style={styles.input}
+							inputContainerStyle={styles.inputContainer}
+							inputStyle={styles.input}
 							value={name}
-							onFocus={handleFocus}
 							onChangeText={handleChange}
+							onFocus={handleFocus}
+							rightIcon={
+								<IconButton onPress={handleSubmit}>
+									<MaterialIcons
+										name='add-circle-outline'
+										size={30}
+										color={theme.brand}
+									/>
+								</IconButton>
+							}
+							errorMessage={errors?.name}
+							renderErrorMessage={false}
+							errorStyle={styles.input_error}
 						/>
-						<IconButton onPress={handleSubmit}>
-							<MaterialIcons
-								name='add-circle-outline'
-								size={30}
-								color={theme.brand}
-							/>
-						</IconButton>
 					</View>
-					{errors?.name && (
-						<View style={styles.errorContainer}>
-							<Text style={styles.error}>{errors?.name}</Text>
-						</View>
-					)}
 					{errors?.message && (
 						<View style={styles.errorContainer}>
 							<Text style={styles.error}>{errors?.message}</Text>

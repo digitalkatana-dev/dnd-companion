@@ -9,6 +9,7 @@ import { clearCampaignSuccess } from '../redux/slices/campaignSlice';
 import { MonsterNavigator } from './monsterNavigator';
 import { CampaignNavigator } from './campaignNavigator';
 import { ProfileNavigator } from './profileNavigator';
+import IconButton from '../components/IconButton';
 
 const AppTabs = createBottomTabNavigator();
 export const TabNavigator = () => {
@@ -36,14 +37,26 @@ export const TabNavigator = () => {
 
 			const IconComponent = iconComponents[route.name];
 
+			const handlePress = () => {
+				if (route.name === 'Monsters') {
+					navigation.navigate('Monsters', { screen: 'MonsterList' });
+				} else if (route.name === 'Campaigns') {
+					navigation.navigate('Campaigns', { screen: 'CampaignList' });
+				} else {
+					navigation.navigate(route.name);
+				}
+			};
+
 			if (IconComponent) {
 				return (
-					<IconComponent
-						name={iconName}
-						size={size}
-						color={color}
-						focused={focused}
-					/>
+					<IconButton onPress={handlePress}>
+						<IconComponent
+							name={iconName}
+							size={size}
+							color={color}
+							focused={focused}
+						/>
+					</IconButton>
 				);
 			}
 
@@ -60,6 +73,7 @@ export const TabNavigator = () => {
 			tabBarStyle,
 			tabBarActiveTintColor: theme.heading,
 			tabBarInactiveTintColor: theme.muted,
+			gestureEnabled: false,
 			swipeEnabled: false,
 		};
 	};

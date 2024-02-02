@@ -5,7 +5,7 @@ import IconButton from '../../../components/IconButton';
 const AvatarList = ({ onPress }) => {
 	const generateAvatarData = () => {
 		return Array.from({ length: 26 }, (_, index) => {
-			const source = `http://33ca-98-176-78-196.ngrok-free.app/uploads/avatars/avatar_${
+			const source = `http://6fbf-98-176-78-196.ngrok-free.app/uploads/avatars/avatar_${
 				index + 1
 			}.jpg`;
 			return { id: index.toString(), source };

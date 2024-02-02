@@ -196,7 +196,7 @@ const ProfileScreen = ({ navigation }) => {
 								source={{
 									uri: user?.profilePic?.replace(
 										'localhost:3005',
-										'33ca-98-176-78-196.ngrok-free.app'
+										'6fbf-98-176-78-196.ngrok-free.app'
 									),
 								}}
 								alt={user?.handle}

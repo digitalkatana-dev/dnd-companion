@@ -5,11 +5,18 @@ import MonsterDetailScreen from '../features/monsters/screens/MonsterDetailScree
 const MonsterStack = createNativeStackNavigator();
 export const MonsterNavigator = () => {
 	return (
-		<MonsterStack.Navigator screenOptions={{ headerShown: false }}>
-			<MonsterStack.Screen name='MonsterList' component={MonsterListScreen} />
+		<MonsterStack.Navigator
+			screenOptions={{ headerShown: false, gestureEnabled: false }}
+		>
+			<MonsterStack.Screen
+				name='MonsterList'
+				component={MonsterListScreen}
+				options={{ gestureEnabled: false }}
+			/>
 			<MonsterStack.Screen
 				name='MonsterDetail'
 				component={MonsterDetailScreen}
+				options={{ gestureEnabled: false }}
 			/>
 		</MonsterStack.Navigator>
 	);

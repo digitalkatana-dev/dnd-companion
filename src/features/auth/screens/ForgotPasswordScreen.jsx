@@ -1,10 +1,5 @@
-import {
-	ImageBackground,
-	StyleSheet,
-	Text,
-	TextInput,
-	View,
-} from 'react-native';
+import { ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { Input as TextInput } from '@rneui/themed';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -77,12 +72,15 @@ const ForgotPasswordScreen = ({ navigation }) => {
 		formControl: {
 			flexDirection: 'column',
 		},
-		input: {
+		inputContainer: {
 			height: 40,
 			margin: 12,
 			backgroundColor: 'lightgrey',
 			borderRadius: 20,
 			padding: 10,
+			textAlign: 'center',
+		},
+		input: {
 			textAlign: 'center',
 		},
 		buttonContainer: {
@@ -103,6 +101,15 @@ const ForgotPasswordScreen = ({ navigation }) => {
 			fontSize: 15,
 			marginVertical: 5,
 			textAlign: 'center',
+		},
+		input_error: {
+			color: theme.error,
+			alignSelf: 'center',
+			fontWeight: 'bold',
+			backgroundColor: 'rgba(0,0,0,.7)',
+			borderRadius: 20,
+			paddingVertical: 3,
+			paddingHorizontal: 5,
 		},
 		errorContainer: {
 			alignItems: 'center',
@@ -132,16 +139,16 @@ const ForgotPasswordScreen = ({ navigation }) => {
 						<TextInput
 							keyboardType='email-address'
 							placeholder='Email'
-							style={styles.input}
+							autoCapitalize='none'
+							inputContainerStyle={styles.inputContainer}
+							inputStyle={styles.input}
 							value={email}
 							onChangeText={handleChange}
 							onFocus={handleFocus}
+							errorMessage={errors?.email}
+							renderErrorMessage={false}
+							errorStyle={styles.input_error}
 						/>
-						{errors?.email && (
-							<View style={styles.errorContainer}>
-								<Text style={styles.error}>{errors?.email}</Text>
-							</View>
-						)}
 					</View>
 				</>
 				<View style={styles.buttonContainer}>

@@ -4,7 +4,9 @@ import ProfileScreen from '../features/profile/screens/ProfileScreen';
 const ProfileStack = createNativeStackNavigator();
 export const ProfileNavigator = () => {
 	return (
-		<ProfileStack.Navigator screenOptions={{ headerShown: false }}>
+		<ProfileStack.Navigator
+			screenOptions={{ headerShown: false, gestureEnabled: false }}
+		>
 			<ProfileStack.Screen name='ProfileScreen' component={ProfileScreen} />
 		</ProfileStack.Navigator>
 	);
