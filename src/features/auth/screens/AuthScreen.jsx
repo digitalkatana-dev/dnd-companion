@@ -93,7 +93,7 @@ const AuthScreen = ({ navigation }) => {
 
 	if (authType === 'login') {
 		if (errors?.login || errors?.password) {
-			maxHeight = 195;
+			maxHeight = 200;
 		} else {
 			maxHeight = 130;
 		}
@@ -105,7 +105,7 @@ const AuthScreen = ({ navigation }) => {
 			errors?.email ||
 			errors?.password
 		) {
-			maxHeight = 480;
+			maxHeight = 500;
 		} else {
 			maxHeight = 320;
 		}
@@ -195,8 +195,10 @@ const AuthScreen = ({ navigation }) => {
 			color: theme.error,
 			alignSelf: 'center',
 			fontWeight: 'bold',
-			backgroundColor: 'rgba(0,0,0,.7)',
 			borderRadius: 20,
+		},
+		error_background: {
+			backgroundColor: 'rgba(0,0,0,.7)',
 			paddingVertical: 3,
 			paddingHorizontal: 5,
 		},
@@ -249,7 +251,11 @@ const AuthScreen = ({ navigation }) => {
 									onFocus={handleFocus}
 									errorMessage={errors?.firstName}
 									renderErrorMessage={false}
-									errorStyle={styles.input_error}
+									errorStyle={
+										errors?.firstName
+											? [styles.input_error, styles.error_background]
+											: styles.input_error
+									}
 								/>
 							</View>
 							<View style={styles.formControl}>
@@ -262,7 +268,11 @@ const AuthScreen = ({ navigation }) => {
 									onFocus={handleFocus}
 									errorMessage={errors?.lastName}
 									renderErrorMessage={false}
-									errorStyle={styles.input_error}
+									errorStyle={
+										errors?.lastName
+											? [styles.input_error, styles.error_background]
+											: styles.input_error
+									}
 								/>
 							</View>
 							<View style={styles.formControl}>
@@ -276,7 +286,11 @@ const AuthScreen = ({ navigation }) => {
 									onFocus={handleFocus}
 									errorMessage={errors?.handle}
 									renderErrorMessage={false}
-									errorStyle={styles.input_error}
+									errorStyle={
+										errors?.handle
+											? [styles.input_error, styles.error_background]
+											: styles.input_error
+									}
 								/>
 							</View>
 							<View style={styles.formControl}>
@@ -291,7 +305,11 @@ const AuthScreen = ({ navigation }) => {
 									onFocus={handleFocus}
 									errorMessage={errors?.email}
 									renderErrorMessage={false}
-									errorStyle={styles.input_error}
+									errorStyle={
+										errors?.email
+											? [styles.input_error, styles.error_background]
+											: styles.input_error
+									}
 								/>
 							</View>
 						</>
@@ -308,7 +326,11 @@ const AuthScreen = ({ navigation }) => {
 								onFocus={handleFocus}
 								errorMessage={errors?.login}
 								renderErrorMessage={false}
-								errorStyle={styles.input_error}
+								errorStyle={
+									errors?.login
+										? [styles.input_error, styles.error_background]
+										: styles.input_error
+								}
 							/>
 						</View>
 					)}
@@ -332,7 +354,11 @@ const AuthScreen = ({ navigation }) => {
 							}
 							errorMessage={errors?.password}
 							renderErrorMessage={false}
-							errorStyle={styles.input_error}
+							errorStyle={
+								errors?.password
+									? [styles.input_error, styles.error_background]
+									: styles.input_error
+							}
 						/>
 					</View>
 				</ScrollView>

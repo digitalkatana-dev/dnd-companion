@@ -109,9 +109,12 @@ const ResetPasswordScreen = ({ navigation }) => {
 			color: theme.error,
 			alignSelf: 'center',
 			fontWeight: 'bold',
-			backgroundColor: 'rgba(0,0,0,.7)',
 			borderRadius: 20,
-			padding: 3,
+		},
+		error_background: {
+			backgroundColor: 'rgba(0,0,0,.7)',
+			paddingVertical: 3,
+			paddingHorizontal: 5,
 		},
 		errorContainer: {
 			alignItems: 'center',
@@ -157,7 +160,11 @@ const ResetPasswordScreen = ({ navigation }) => {
 							}
 							errorMessage={errors?.password}
 							renderErrorMessage={false}
-							errorStyle={styles.input_error}
+							errorStyle={
+								errors?.password
+									? [styles.input_error, styles.error_background]
+									: styles.input_error
+							}
 						/>
 					</View>
 				</>

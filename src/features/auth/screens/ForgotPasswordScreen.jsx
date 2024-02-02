@@ -106,8 +106,10 @@ const ForgotPasswordScreen = ({ navigation }) => {
 			color: theme.error,
 			alignSelf: 'center',
 			fontWeight: 'bold',
-			backgroundColor: 'rgba(0,0,0,.7)',
 			borderRadius: 20,
+		},
+		error_background: {
+			backgroundColor: 'rgba(0,0,0,.7)',
 			paddingVertical: 3,
 			paddingHorizontal: 5,
 		},
@@ -147,7 +149,11 @@ const ForgotPasswordScreen = ({ navigation }) => {
 							onFocus={handleFocus}
 							errorMessage={errors?.email}
 							renderErrorMessage={false}
-							errorStyle={styles.input_error}
+							errorStyle={
+								errors?.email
+									? [styles.input_error, styles.error_background]
+									: styles.input_error
+							}
 						/>
 					</View>
 				</>
